@@ -1,0 +1,28 @@
+#include <SPI.h>
+#include <LoRa.h>
+
+#define NSS   5
+#define RST   14
+#define DIO0  2
+
+void setup() {
+  Serial.begin(115200);
+  delay(2000);  // wait for Serial to stabilize
+
+  Serial.println("ESP32 Booting...");
+
+  LoRa.setPins(NSS, RST, DIO0);
+
+  if (!LoRa.begin(433E6)) {
+    Serial.println("LoRa init failed. Check wiring!");
+    while (1);
+  }
+
+  Serial.println("LoRa init successful.");
+}
+
+void loop() {
+  // just blink message every 2s to confirm running
+  Serial.println("ESP32 running...");
+  delay(2000);
+}
