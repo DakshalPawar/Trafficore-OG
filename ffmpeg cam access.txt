@@ -1,0 +1,1 @@
+rpicam-vid -t 0 --width 1280 --height 720 --framerate 25 --codec yuv420 --inline | ffmpeg -f rawvideo -pix_fmt yuv420p -s 1280x720 -r 25 -i - -f mjpeg -q:v 5 -boundary_tag mjpeg -fflags nobuffer http://localhost:8080
