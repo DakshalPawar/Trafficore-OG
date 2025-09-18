@@ -5,3 +5,8 @@ rpicam-vid -t 0 --width 1280 --height 720 --framerate 25 --codec yuv420 --inline
 rpicam-vid -t 0 --inline --codec mjpeg -o - \
   | mjpg_streamer -i "input_file.so -f - -n" \
                   -o "output_http.so -p 8080 -w ./www"
+
+
+rpicam-vid -t 0 --inline --codec mjpeg -o - \
+  | mjpg_streamer -i "input_file.so -f - -n" \
+                  -o "output_http.so -p 8080 -w /usr/share/mjpg-streamer/www"
