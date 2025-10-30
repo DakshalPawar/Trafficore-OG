@@ -105,7 +105,7 @@ client.on('message', (topic, message) => {
 // ================= Camera Stream =================
 const video = document.getElementById('cam');
 const streamURL = "http://192.168.0.175:8000/stream.m3u8"
-http://192.168.0.175:8000/player.html"; // Pi HLS stream (replace IP if needed)
+//http://192.168.0.192:8080/player.html"( teplace when needed); // Pi HLS stream (replace IP if needed)
 
 if (video) {
   if (Hls.isSupported()) {
