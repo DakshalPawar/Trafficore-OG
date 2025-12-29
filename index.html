@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TraffiCore Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">T</div>
+            <span class="sidebar-title">TraffiCore Admin</span>
+        </div>
+
+        <nav class="nav-menu">
+            <div class="nav-item active" data-page="dashboard">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" data-page="live-map">
+                <span class="nav-icon">🗺️</span>
+                <span>Live Map</span>
+            </div>
+            <div class="nav-item" data-page="ambulances">
+                <span class="nav-icon">🚑</span>
+                <span>Ambulances</span>
+            </div>
+            <div class="nav-item" data-page="hospitals">
+                <span class="nav-icon">🏥</span>
+                <span>Hospitals</span>
+            </div>
+            <div class="nav-item" data-page="analytics">
+                <span class="nav-icon">📈</span>
+                <span>Analytics</span>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- TOP NAVBAR -->
+        <header class="top-navbar">
+            <div class="navbar-left">
+                <div class="system-status">
+                    <div class="status-dot"></div>
+                    <span>System Online</span>
+                </div>
+                <div class="current-time" id="currentTime"></div>
+            </div>
+
+            <div class="navbar-right">
+                <button class="notification-btn">
+                    🔔
+                    <span class="notification-badge">5</span>
+                </button>
+                <div class="profile-btn">
+                    <div class="profile-avatar"></div>
+                    <span>Admin</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT AREA -->
+        <div class="content-area">
+            <!-- DASHBOARD PAGE -->
+            <section class="page-section active" id="dashboard">
+                <div class="page-header">
+                    <h1>Dashboard Overview</h1>
+                    <p>Real-time system monitoring and control</p>
+                </div>
+
+                <div class="stats-grid" id="statsGrid"></div>
+
+                <div class="section-card">
+                    <h2>Active Emergencies</h2>
+                    <div id="activeEmergencies"></div>
+                </div>
+            </section>
+
+            <!-- LIVE MAP PAGE -->
+            <section class="page-section" id="live-map">
+                <div class="page-header">
+                    <h1>Live Map</h1>
+                    <p>Real-time ambulance tracking</p>
+                </div>
+
+                <div class="map-container">
+                    <canvas id="mapCanvas"></canvas>
+                    <div id="mapMarkers"></div>
+
+                    <div class="map-legend">
+                        <div class="legend-title">Status Legend</div>
+                        <div class="legend-item">
+                            <span class="legend-dot available"></span>
+                            <span>Available</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot active"></span>
+                            <span>En Route</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot emergency"></span>
+                            <span>Emergency</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot offline"></span>
+                            <span>Offline</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AMBULANCES PAGE -->
+            <section class="page-section" id="ambulances">
+                <div class="page-header">
+                    <h1>Ambulance Fleet</h1>
+                    <p>Manage all ambulance units</p>
+                </div>
+
+                <div class="filter-bar">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="available">Available</button>
+                    <button class="filter-btn" data-filter="active">Active</button>
+                    <button class="filter-btn" data-filter="emergency">Emergency</button>
+                    <button class="filter-btn" data-filter="offline">Offline</button>
+                </div>
+
+                <div id="ambulanceList"></div>
+            </section>
+
+            <!-- HOSPITALS PAGE -->
+            <section class="page-section" id="hospitals">
+                <div class="page-header">
+                    <h1>Connected Hospitals</h1>
+                    <p>Hospital network status</p>
+                </div>
+
+                <div class="hospital-grid" id="hospitalGrid"></div>
+            </section>
+
+            <!-- ANALYTICS PAGE -->
+            <section class="page-section" id="analytics">
+                <div class="page-header">
+                    <h1>Analytics</h1>
+                    <p>Performance metrics and insights</p>
+                </div>
+
+                <div class="analytics-placeholder">
+                    <div class="placeholder-icon">📊</div>
+                    <h3>Analytics Dashboard Coming Soon</h3>
+                    <p>Performance metrics and insights will be displayed here</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- DETAIL PANEL -->
+    <aside class="detail-panel" id="detailPanel">
+        <div class="detail-header">
+            <h2>Ambulance Details</h2>
+            <button class="close-detail" id="closeDetail">✕</button>
+        </div>
+        <div class="detail-content" id="detailContent"></div>
+    </aside>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
