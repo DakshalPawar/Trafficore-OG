@@ -1,0 +1,136 @@
+#!/usr/bin/env python3
+"""
+TRAFFICORE Ambulance System - Raspberry Pi
+Sends patient data, GPS location, and handles chat with hospital
+"""
+
+import paho.mqtt.client as mqtt
+import json
+import time
+import random
+from datetime import datetime
+
+# ================= Configuration =================
+BROKER_IP = "192.168.26.193"  # Raspberry Pi IP (MQTT broker)
+BROKER_PORT = 1883  # Standard MQTT port
+
+TOPICS = {
+    "PATIENT": "hospital/patient",
+    "GPS": "hospital/gps",
+    "CHAT_DOCTOR": "hospital/chat/doctor",
+    "CHAT_AMBULANCE": "hospital/chat/ambulance"
+}
+
+# ================= MQTT Setup =================
+client = mqtt.Client()
+
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("✅ Connected to MQTT Broker!")
+        # Subscribe to doctor's chat messages
+        client.subscribe(TOPICS["CHAT_DOCTOR"])
+        print("📩 Subscribed to doctor chat")
+    else:
+        print(f"❌ Failed to connect, return code {rc}")
+
+def on_message(client, userdata, msg):
+    """Handle incoming messages from doctor"""
+    if msg.topic == TOPICS["CHAT_DOCTOR"]:
+        data = json.loads(msg.payload.decode())
+        print(f"\n💬 Doctor: {data['message']}")
+        print(f"   Time: {data['timestamp']}")
+
+client.on_connect = on_connect
+client.on_message = on_message
+
+# Connect to broker
+print(f"🔌 Connecting to MQTT broker at {BROKER_IP}...")
+client.connect(BROKER_IP, BROKER_PORT, 60)
+client.loop_start()
+
+# ================= Simulate Patient Data =================
+def get_patient_data():
+    """Simulate or read real sensor data"""
+    return {
+        "name": "Priya Sharma",
+        "age": "25",
+        "blood_type": "O+",
+        "condition": "Heavily bleeding",
+        "accident_details": "Bike Accident",
+        "heart_rate": str(random.randint(65, 120)),
+        "blood_pressure": f"{random.randint(90, 140)}/{random.randint(60, 90)}",
+        "oxygen": f"{random.uniform(88, 98):.1f}",
+        "temperature": f"{random.uniform(36.5, 37.5):.1f}"
+    }
+
+# ================= Simulate GPS Data =================
+# Starting position (Mumbai coordinates)
+current_lat = 19.0760
+current_lng = 72.8777
+
+def get_gps_data():
+    """Simulate GPS movement towards hospital"""
+    global current_lat, current_lng
+    
+    # Simulate movement (in reality, use GPS module)
+    current_lat += random.uniform(-0.001, 0.001)
+    current_lng += random.uniform(-0.001, 0.001)
+    
+    # Calculate ETA (simplified)
+    eta = random.randint(5, 20)
+    
+    return {
+        "latitude": current_lat,
+        "longitude": current_lng,
+        "eta": eta,
+        "speed": random.randint(40, 80),
+        "timestamp": datetime.now().isoformat()
+    }
+
+# ================= Send Chat Message =================
+def send_chat_message(message):
+    """Send message to hospital"""
+    data = {
+        "message": message,
+        "timestamp": datetime.now().isoformat()
+    }
+    client.publish(TOPICS["CHAT_AMBULANCE"], json.dumps(data))
+    print(f"📤 Sent: {message}")
+
+# ================= Main Loop =================
+try:
+    print("\n🚑 TRAFFICORE Ambulance System Started")
+    print("=" * 50)
+    print("Sending patient data and GPS updates...")
+    print("Type 'msg: <your message>' to chat with hospital")
+    print("Press Ctrl+C to stop")
+    print("=" * 50)
+    
+    counter = 0
+    
+    while True:
+        # Send patient data every 5 seconds
+        if counter % 5 == 0:
+            patient_data = get_patient_data()
+            client.publish(TOPICS["PATIENT"], json.dumps(patient_data))
+            print(f"\n📊 Patient data sent - HR: {patient_data['heart_rate']} bpm, O2: {patient_data['oxygen']}%")
+        
+        # Send GPS data every 3 seconds
+        if counter % 3 == 0:
+            gps_data = get_gps_data()
+            client.publish(TOPICS["GPS"], json.dumps(gps_data))
+            print(f"📍 GPS updated - ETA: {gps_data['eta']} min, Location: ({gps_data['latitude']:.4f}, {gps_data['longitude']:.4f})")
+        
+        counter += 1
+        time.sleep(1)
+
+except KeyboardInterrupt:
+    print("\n\n🛑 Shutting down...")
+    client.loop_stop()
+    client.disconnect()
+    print("✅ Disconnected safely")
+
+except Exception as e:
+    print(f"\n❌ Error: {e}")
+    client.loop_stop()
+    client.disconnect()
