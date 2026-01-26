@@ -36,12 +36,17 @@
   <div class="dashboard">
 
     <!-- Live Camera -->
-    <div class="camera-stream">
-      <video id="cam" controls autoplay muted playsinline
-             style="width:100%; max-height:500px; border-radius:10px; background:#000;">
-        Your browser does not support HLS streaming.
-      </video>
-    </div>
+    <section id="camera-feed">
+          <h2>📹 Live Camera Feed</h2>
+          <iframe
+              src="http://192.168.0.175:8000/hls_stream/stream.m3u8"
+              width="640"
+              height="340"
+              frameborder="0"
+              allowfullscreen
+              style="border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+          </iframe>
+        </section>
 
 
 
