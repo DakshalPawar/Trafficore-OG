@@ -1,6 +1,6 @@
 // ================= Configuration =================
-const PI_IP = "192.168.0.175"; // Replace with your Raspberry Pi IP
-const MQTT_PORT = 8001; // WebSocket port from mosquitto config
+const PI_IP = "192.168.26.193"; // Replace with your Raspberry Pi IP
+const MQTT_PORT = 9001; // WebSocket port from mosquitto config
 const TOPICS = {
   PATIENT: "hospital/patient",
   GPS: "hospital/gps",
@@ -18,18 +18,18 @@ const client = mqtt.connect(`ws://${PI_IP}:${MQTT_PORT}`);
 
 client.on('connect', () => {
   console.log("✅ Connected to MQTT broker over WebSocket");
-
+  
   // Subscribe to all topics
   client.subscribe(TOPICS.PATIENT, (err) => {
     if (err) console.error("Patient subscription error:", err);
     else console.log("📋 Subscribed to patient data");
   });
-
+  
   client.subscribe(TOPICS.GPS, (err) => {
     if (err) console.error("GPS subscription error:", err);
     else console.log("📍 Subscribed to GPS data");
   });
-
+  
   client.subscribe(TOPICS.CHAT_AMBULANCE, (err) => {
     if (err) console.error("Chat subscription error:", err);
     else console.log("💬 Subscribed to ambulance chat");
@@ -48,44 +48,44 @@ if (mapElement) {
   setTimeout(() => {
     document.getElementById("gps-spinner").classList.add("hidden");
     mapElement.classList.remove("hidden");
-
+    
     // Initialize map
     map = L.map('map').setView([19.0760, 72.8777], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '© OpenStreetMap'
     }).addTo(map);
-
+    
     // Ambulance icon
     const ambulanceIcon = L.icon({
       iconUrl: "assets/ambulance.png",
       iconSize: [40, 40]
     });
-
+    
     // Initial marker
     ambulanceMarker = L.marker([19.0760, 72.8777], { icon: ambulanceIcon })
-        .addTo(map)
-        .bindPopup("🚑 Ambulance Location")
-        .openPopup();
+      .addTo(map)
+      .bindPopup("🚑 Ambulance Location")
+      .openPopup();
   }, 2000);
 }
 
 // Handle GPS updates from MQTT
 client.on('message', (topic, message) => {
   const data = JSON.parse(message.toString());
-
+  
   // ================= GPS Updates =================
   if (topic === TOPICS.GPS) {
     if (ambulanceMarker && map) {
       const { latitude, longitude, eta } = data;
       ambulanceMarker.setLatLng([latitude, longitude]);
       map.panTo([latitude, longitude]);
-
+      
       // Update ETA in alerts
       updateAlerts(eta);
     }
   }
-
+  
   // ================= Patient Data Updates =================
   if (topic === TOPICS.PATIENT) {
     // Update patient info
@@ -94,7 +94,7 @@ client.on('message', (topic, message) => {
     updateElement("blood_type", data.blood_type);
     updateElement("condition", data.condition);
     updateElement("accident", data.accident_details);
-
+    
     // Update patient stats table
     const statsTable = document.querySelector("#stats tbody");
     if (statsTable) {
@@ -105,11 +105,11 @@ client.on('message', (topic, message) => {
         <tr><td>Temperature</td><td>${data.temperature || '--'}°C</td></tr>
       `;
     }
-
+    
     // Check for critical values and update alerts
     checkCriticalValues(data);
   }
-
+  
   // ================= Chat Messages =================
   if (topic === TOPICS.CHAT_AMBULANCE) {
     displayChatMessage(data.message, 'ambulance', data.timestamp);
@@ -139,14 +139,14 @@ function updateAlerts(eta) {
 function checkCriticalValues(data) {
   const alertList = document.getElementById("alert-list");
   if (!alertList) return;
-
+  
   const alerts = [];
-
+  
   // Check oxygen level
   if (data.oxygen && parseFloat(data.oxygen) < 90) {
     alerts.push("⚠️ Oxygen level dropped below 90%!");
   }
-
+  
   // Check heart rate
   if (data.heart_rate) {
     const hr = parseInt(data.heart_rate);
@@ -154,7 +154,7 @@ function checkCriticalValues(data) {
       alerts.push("⚠️ Abnormal heart rate detected!");
     }
   }
-
+  
   // Check temperature
   if (data.temperature) {
     const temp = parseFloat(data.temperature);
@@ -162,16 +162,16 @@ function checkCriticalValues(data) {
       alerts.push("⚠️ Abnormal body temperature!");
     }
   }
-
+  
   // Update alert badge
   const badge = document.getElementById("alert-badge");
   if (badge) {
     badge.textContent = alerts.length;
   }
-
+  
   // Add ETA if available
   alerts.push("🚑 Ambulance en route...");
-
+  
   alertList.innerHTML = alerts.map(alert => `<li>${alert}</li>`).join('');
 }
 
@@ -179,12 +179,12 @@ function checkCriticalValues(data) {
 function displayChatMessage(message, sender, timestamp) {
   const chatBox = document.getElementById("chat-box");
   if (!chatBox) return;
-
+  
   const messageDiv = document.createElement('div');
   messageDiv.className = `chat-message ${sender}`;
-
+  
   const time = timestamp ? new Date(timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
-
+  
   messageDiv.innerHTML = `
     <div class="message-header">
       <strong>${sender === 'ambulance' ? '🚑 Ambulance' : '🏥 Doctor'}</strong>
@@ -192,7 +192,7 @@ function displayChatMessage(message, sender, timestamp) {
     </div>
     <div class="message-body">${message}</div>
   `;
-
+  
   chatBox.appendChild(messageDiv);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
@@ -201,18 +201,18 @@ function displayChatMessage(message, sender, timestamp) {
 function sendChatMessage() {
   const input = document.getElementById("chat-input");
   if (!input || !input.value.trim()) return;
-
+  
   const message = {
     message: input.value.trim(),
     timestamp: new Date().toISOString()
   };
-
+  
   // Publish to MQTT
   client.publish(TOPICS.CHAT_DOCTOR, JSON.stringify(message));
-
+  
   // Display in chat box
   displayChatMessage(message.message, 'doctor', message.timestamp);
-
+  
   input.value = '';
 }
 
@@ -263,7 +263,3 @@ if (cameraFeed) {
 
 // Make sendChatMessage available globally
 window.sendChatMessage = sendChatMessage;
-
-
-
-
