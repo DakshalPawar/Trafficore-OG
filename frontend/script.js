@@ -64,8 +64,8 @@ statsIds.forEach(id => {
 });
 
 // MQTT over WebSockets
-const PI_IP = "192.168.26.193"; // Replace with your Pi IP
-const MQTT_PORT = 9001; // WebSocket port from your mosquitto config
+const PI_IP = "192.168.0.232"; // Replace with your Pi IP
+const MQTT_PORT = 8001; // WebSocket port from your mosquitto config
 const TOPIC = "hospital/patient";
 
 // Connect to MQTT broker over WebSocket
@@ -104,7 +104,7 @@ client.on('message', (topic, message) => {
 
 // ================= Camera Stream =================
 const video = document.getElementById('cam');
-const streamURL = "http://192.168.0.175:8000/stream.m3u8"
+const streamURL = "http://192.168.0.232:8000/stream.m3u8"
 //http://192.168.0.192:8080/player.html"( teplace when needed); // Pi HLS stream (replace IP if needed)
 
 if (video) {
@@ -126,8 +126,6 @@ if (video) {
     alert("Your browser does not support HLS streaming. Try Chrome/Edge/Firefox with hls.js.");
   }
 }
-
-
 
 
 
