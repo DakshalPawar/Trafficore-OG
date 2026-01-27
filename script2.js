@@ -520,17 +520,30 @@ function renderHospitals() {
 
 /* ========================================
    VIDEO AUTHENTICATION WITH REAL HLS STREAM
-   Using your working HLS implementation
+   FIXED VERSION with proper error handling
    ======================================== */
 
 let authTimer;
 let authCountdown = 120; // 120 seconds = 2 minutes
 let hls = null; // HLS instance
+let currentAuthAmbulanceId = null; // Track which ambulance is being authenticated
 
+/**
+ * Opens video authentication modal for an ambulance
+ * @param {string} ambulanceId - The ID of the ambulance to authenticate
+ */
 function openVideoAuthentication(ambulanceId) {
+    console.log(`🎥 Opening video authentication for ${ambulanceId}`);
+    
     // Find the ambulance
     const ambulance = ambulances.find(amb => amb.id === ambulanceId);
-    if (!ambulance) return;
+    if (!ambulance) {
+        console.error(`❌ Ambulance ${ambulanceId} not found`);
+        return;
+    }
+
+    // Store the current ambulance ID
+    currentAuthAmbulanceId = ambulanceId;
 
     // Set ambulance details in modal
     document.getElementById('verifyingAmbId').textContent = ambulanceId;
@@ -546,11 +559,21 @@ function openVideoAuthentication(ambulanceId) {
     const video = document.getElementById('authVideoPlayer');
     const videoLoading = document.getElementById('videoLoading');
 
+    // Verify elements exist
+    if (!video) {
+        console.error('❌ Video element not found!');
+        return;
+    }
+    if (!videoLoading) {
+        console.error('❌ Video loading element not found!');
+        return;
+    }
+
     // Show loading spinner initially
     videoLoading.classList.remove('hidden');
     video.style.display = 'none';
 
-    // Initialize HLS stream using your working code
+    // Initialize HLS stream
     initializeHLSStream(video, videoLoading);
 
     // Reset countdown to 2 minutes
@@ -569,47 +592,265 @@ function openVideoAuthentication(ambulanceId) {
         }
     }, 1000);
 
-    // Setup approve/deny buttons with proper event listeners
+    // Setup approve/deny buttons
     setupVideoButtons(ambulanceId);
+    
+    console.log('✓ Video authentication modal opened');
 }
 
-/* ========================================
-   HLS STREAM INITIALIZATION
-   Your working code - DO NOT MODIFY
-   ======================================== */
-
+/**
+ * Initializes HLS stream for video authentication
+ * @param {HTMLVideoElement} video - The video element
+ * @param {HTMLElement} loadingElement - The loading spinner element
+ */
 function initializeHLSStream(video, loadingElement) {
-    if (video) {
-        if (Hls.isSupported()) {
-            hls = new Hls();
-            hls.loadSource(HLS_STREAM_URL);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                // Hide loading spinner
-                loadingElement.classList.add('hidden');
-                // Show video
-                video.style.display = 'block';
-                // Play video
-                video.play().catch(err => console.error("Autoplay failed:", err));
-            });
-        } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-            // Safari/iOS native HLS
-            video.src = HLS_STREAM_URL;
-            video.addEventListener("loadedmetadata", () => {
-                // Hide loading spinner
-                loadingElement.classList.add('hidden');
-                // Show video
-                video.style.display = 'block';
-                // Play video
-                video.play().catch(err => console.error("Play failed:", err));
-            });
-        } else {
-            console.error("❌ Browser does not support HLS streaming.");
-            alert("Your browser does not support HLS streaming. Try Chrome/Edge/Firefox with hls.js.");
-        }
+    const HLS_STREAM_URL = "http://192.168.0.232:8000/stream.m3u8";
+    
+    console.log(`📹 Initializing HLS stream: ${HLS_STREAM_URL}`);
+
+    if (Hls.isSupported()) {
+        console.log('✓ HLS.js is supported');
+        
+        // Create new HLS instance
+        hls = new Hls({
+            debug: false,
+            enableWorker: true,
+            lowLatencyMode: true,
+            backBufferLength: 90
+        });
+
+        // Load source
+        hls.loadSource(HLS_STREAM_URL);
+        hls.attachMedia(video);
+
+        // On manifest parsed (stream is ready)
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            console.log('✓ HLS manifest parsed, stream ready');
+            loadingElement.classList.add('hidden');
+            video.style.display = 'block';
+            
+            video.play()
+                .then(() => console.log('✓ Video playing'))
+                .catch(err => {
+                    console.error("❌ Autoplay failed:", err);
+                    // Show play button or alert user
+                    alert('Click on the video to start playback');
+                });
+        });
+
+        // Error handling
+        hls.on(Hls.Events.ERROR, (event, data) => {
+            console.error('❌ HLS Error:', data);
+            
+            if (data.fatal) {
+                switch(data.type) {
+                    case Hls.ErrorTypes.NETWORK_ERROR:
+                        console.error('Fatal network error encountered, trying to recover...');
+                        hls.startLoad();
+                        break;
+                    case Hls.ErrorTypes.MEDIA_ERROR:
+                        console.error('Fatal media error encountered, trying to recover...');
+                        hls.recoverMediaError();
+                        break;
+                    default:
+                        console.error('Fatal error, cannot recover');
+                        loadingElement.innerHTML = '<p style="color: #ff3d71;">❌ Stream connection failed</p>';
+                        break;
+                }
+            }
+        });
+
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        console.log('✓ Native HLS support (Safari/iOS)');
+        
+        // Safari/iOS native HLS
+        video.src = HLS_STREAM_URL;
+        
+        video.addEventListener("loadedmetadata", () => {
+            console.log('✓ Video metadata loaded');
+            loadingElement.classList.add('hidden');
+            video.style.display = 'block';
+            
+            video.play()
+                .then(() => console.log('✓ Video playing'))
+                .catch(err => console.error("❌ Play failed:", err));
+        });
+
+        video.addEventListener("error", (e) => {
+            console.error('❌ Video error:', e);
+            loadingElement.innerHTML = '<p style="color: #ff3d71;">❌ Stream connection failed</p>';
+        });
+
+    } else {
+        console.error("❌ Browser does not support HLS streaming");
+        alert("Your browser does not support HLS streaming. Please use Chrome, Firefox, or Safari.");
+        loadingElement.innerHTML = '<p style="color: #ff3d71;">❌ Browser not supported</p>';
     }
 }
 
+/**
+ * Sets up event listeners for approve/deny buttons
+ * @param {string} ambulanceId - The ID of the ambulance being authenticated
+ */
+function setupVideoButtons(ambulanceId) {
+    const approveBtn = document.getElementById('approveBtn');
+    const denyBtn = document.getElementById('denyBtn');
+
+    if (!approveBtn || !denyBtn) {
+        console.error('❌ Approve/Deny buttons not found!');
+        return;
+    }
+
+    // Remove any existing event listeners by cloning and replacing
+    const newApproveBtn = approveBtn.cloneNode(true);
+    const newDenyBtn = denyBtn.cloneNode(true);
+    approveBtn.parentNode.replaceChild(newApproveBtn, approveBtn);
+    denyBtn.parentNode.replaceChild(newDenyBtn, denyBtn);
+
+    // Add fresh event listeners
+    newApproveBtn.addEventListener('click', function() {
+        console.log(`✓ Approve clicked for ${ambulanceId}`);
+        approveAuthentication(ambulanceId);
+    });
+
+    newDenyBtn.addEventListener('click', function() {
+        console.log(`✕ Deny clicked for ${ambulanceId}`);
+        denyAuthentication(ambulanceId);
+    });
+
+    console.log('✓ Video buttons configured');
+}
+
+/**
+ * Updates the authentication timer display
+ */
+function updateAuthTimer() {
+    const minutes = Math.floor(authCountdown / 60);
+    const seconds = authCountdown % 60;
+
+    // Update timer display
+    const timerElement = document.getElementById('videoTimer');
+    const remainingElement = document.getElementById('authTimeRemaining');
+    const progressElement = document.getElementById('progressFill');
+
+    if (timerElement) {
+        timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+    
+    if (remainingElement) {
+        remainingElement.textContent = `${authCountdown}s`;
+    }
+
+    // Update progress bar (2 minutes = 120 seconds)
+    if (progressElement) {
+        const progressPercent = (authCountdown / 120) * 100;
+        progressElement.style.width = `${progressPercent}%`;
+    }
+}
+
+/**
+ * Approves authentication for an ambulance
+ * @param {string} ambulanceId - The ID of the ambulance to approve
+ */
+function approveAuthentication(ambulanceId) {
+    console.log(`✓ Approving authentication for ${ambulanceId}`);
+    
+    // Find and update ambulance
+    const ambulance = ambulances.find(amb => amb.id === ambulanceId);
+    if (ambulance) {
+        ambulance.authenticated = true;
+
+        // Show success message
+        alert(`✓ Ambulance ${ambulanceId} has been authenticated successfully!`);
+
+        // Close modal and update UI
+        closeVideoModal();
+        renderAmbulances();
+
+        // If detail panel is open, refresh it
+        const detailPanel = document.getElementById('detailPanel');
+        if (detailPanel && detailPanel.classList.contains('active')) {
+            showAmbulanceDetails(ambulance);
+        }
+        
+        console.log(`✓ ${ambulanceId} authenticated successfully`);
+    } else {
+        console.error(`❌ Ambulance ${ambulanceId} not found for approval`);
+    }
+}
+
+/**
+ * Denies authentication for an ambulance
+ * @param {string} ambulanceId - The ID of the ambulance to deny
+ */
+function denyAuthentication(ambulanceId) {
+    console.log(`✕ Denying authentication for ${ambulanceId}`);
+    
+    if (confirm(`Are you sure you want to deny access to ${ambulanceId}?`)) {
+        alert(`✕ Authentication denied for ${ambulanceId}. Access to system restricted.`);
+        closeVideoModal();
+        console.log(`✕ ${ambulanceId} authentication denied`);
+    }
+}
+
+/**
+ * Closes the video authentication modal and cleans up resources
+ */
+function closeVideoModal() {
+    console.log('🔒 Closing video modal and cleaning up...');
+    
+    // Stop timer
+    if (authTimer) {
+        clearInterval(authTimer);
+        authTimer = null;
+        console.log('✓ Timer stopped');
+    }
+
+    // Stop and cleanup HLS stream
+    const video = document.getElementById('authVideoPlayer');
+
+    if (hls) {
+        hls.destroy();
+        hls = null;
+        console.log('✓ HLS instance destroyed');
+    }
+
+    // Reset video element
+    if (video) {
+        video.pause();
+        video.src = '';
+        video.style.display = 'none';
+        video.load(); // Reset video state
+        console.log('✓ Video element reset');
+    }
+
+    // Show loading spinner again for next time
+    const videoLoading = document.getElementById('videoLoading');
+    if (videoLoading) {
+        videoLoading.classList.remove('hidden');
+        videoLoading.innerHTML = `
+            <div class="spinner"></div>
+            <p>Connecting to ambulance camera...</p>
+        `;
+    }
+
+    // Hide modal
+    const videoModal = document.getElementById('videoModal');
+    if (videoModal) {
+        videoModal.classList.remove('active');
+    }
+
+    // Clear current ambulance ID
+    currentAuthAmbulanceId = null;
+
+    console.log('✓ Video modal closed and cleaned up');
+}
+
+// Make functions globally available
+window.openVideoAuthentication = openVideoAuthentication;
+window.closeVideoModal = closeVideoModal;
+window.approveAuthentication = approveAuthentication;
+window.denyAuthentication = denyAuthentication;
 /* ========================================
    SETUP VIDEO BUTTONS
    Fix: Use addEventListener instead of onclick to prevent conflicts
