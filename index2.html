@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TraffiCore Admin Dashboard</title>
+
+    <!-- Leaflet CSS for Maps -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="styles2.css">
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-container" id="loginContainer">
+    <div class="login-box">
+        <div class="login-logo">T</div>
+        <h1 class="login-title">TraffiCore Admin</h1>
+        <p class="login-subtitle">Secure Emergency Management System</p>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" class="form-input" id="username" placeholder="Enter your username" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-input" id="password" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" class="login-btn">Login to Dashboard</button>
+        </form>
+
+        <div class="demo-credentials">
+            <div class="demo-credentials-title">🔐 Demo Credentials</div>
+            <div class="demo-item"><strong>Admin:</strong> admin / admin123</div>
+            <div class="demo-item"><strong>Ambulance Driver:</strong> driver / driver123</div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN APPLICATION -->
+<div class="app-container" id="appContainer" style="display: none;">
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">T</div>
+            <span class="sidebar-title">TraffiCore Admin</span>
+        </div>
+
+        <nav class="nav-menu">
+            <div class="nav-item active" data-page="dashboard">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" data-page="live-map">
+                <span class="nav-icon">🗺️</span>
+                <span>Live Map</span>
+            </div>
+            <div class="nav-item" data-page="ambulances">
+                <span class="nav-icon">🚑</span>
+                <span>Ambulances</span>
+            </div>
+            <div class="nav-item" data-page="hospitals">
+                <span class="nav-icon">🏥</span>
+                <span>Hospitals</span>
+            </div>
+        </nav>
+
+        <div class="logout-section">
+            <button class="logout-btn" id="logoutBtn">🚪 Logout</button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- TOP NAVBAR -->
+        <header class="top-navbar">
+            <div class="navbar-left">
+                <div class="system-status">
+                    <div class="status-dot"></div>
+                    <span>System Online</span>
+                </div>
+                <div class="current-time" id="currentTime"></div>
+            </div>
+
+            <div class="navbar-right">
+                <div class="profile-section">
+                    <div class="profile-avatar"></div>
+                    <div class="profile-info">
+                        <div class="profile-name" id="userName">Admin User</div>
+                        <div class="profile-role" id="userRole">System Administrator</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT AREA -->
+        <div class="content-area">
+
+            <!-- DASHBOARD PAGE -->
+            <section class="page-section active" id="dashboard">
+                <div class="page-header">
+                    <h1>Dashboard Overview</h1>
+                    <p>Real-time system monitoring • Malad-Marve Region</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Active Ambulances</div>
+                            </div>
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #ff3d71, #ff6b9d);">
+                                🚑
+                            </div>
+                        </div>
+                        <div class="stat-value">3</div>
+                        <div class="stat-change positive">+2 from last hour</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Emergency Calls</div>
+                            </div>
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #ffaa00, #ffc233);">
+                                ⚠️
+                            </div>
+                        </div>
+                        <div class="stat-value">12</div>
+                        <div class="stat-change positive">+5 today</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Avg Response Time</div>
+                            </div>
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #00e096, #00c9ff);">
+                                ⏱️
+                            </div>
+                        </div>
+                        <div class="stat-value">4.2m</div>
+                        <div class="stat-change negative">-0.8m improvement</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Connected Hospitals</div>
+                            </div>
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #2e5bff, #5e72e4);">
+                                🏥
+                            </div>
+                        </div>
+                        <div class="stat-value">6</div>
+                        <div class="stat-change positive">All operational</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LIVE MAP PAGE -->
+            <section class="page-section" id="live-map">
+                <div class="page-header">
+                    <h1>Live Tracking Map</h1>
+                    <p>Real-time ambulance & hospital locations • Malad-Marve Area</p>
+                </div>
+
+                <div class="map-container">
+                    <div id="map"></div>
+
+                    <div class="map-legend">
+                        <div class="legend-title">Map Legend</div>
+                        <div class="legend-item">
+                            <span class="legend-dot ambulance"></span>
+                            <span>Ambulance</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot hospital"></span>
+                            <span>Hospital</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AMBULANCES PAGE -->
+            <section class="page-section" id="ambulances">
+                <div class="page-header">
+                    <h1>Ambulance Fleet</h1>
+                    <p>Manage and monitor all ambulance units</p>
+                </div>
+
+                <div class="ambulance-grid" id="ambulanceGrid"></div>
+            </section>
+
+            <!-- HOSPITALS PAGE -->
+            <section class="page-section" id="hospitals">
+                <div class="page-header">
+                    <h1>Connected Hospitals</h1>
+                    <p>Hospital network in Malad-Marve region</p>
+                </div>
+
+                <div class="hospital-grid" id="hospitalGrid"></div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- SIDE DETAIL PANEL -->
+    <aside class="detail-panel" id="detailPanel">
+        <div class="detail-header">
+            <h2 id="detailTitle">Ambulance Details</h2>
+            <button class="close-detail" id="closeDetail">✕</button>
+        </div>
+        <div class="detail-content" id="detailContent">
+            <!-- Content will be dynamically loaded here -->
+        </div>
+    </aside>
+
+</div>
+
+<!-- VIDEO AUTHENTICATION MODAL WITH REAL HLS STREAM -->
+<div class="video-modal" id="videoModal">
+    <div class="video-modal-content">
+        <div class="video-modal-header">
+            <h2>🎥 Ambulance Authentication</h2>
+            <button class="close-video-modal" id="closeVideoModal">✕</button>
+        </div>
+
+        <div class="video-modal-body">
+            <div class="video-info">
+                <p class="video-instruction">Verifying ambulance <strong id="verifyingAmbId"></strong></p>
+                <p class="video-subtitle">Live video feed for identity confirmation (Max 2 minutes)</p>
+            </div>
+
+            <!-- Real HLS Video Feed Container -->
+            <section id="camera-feed">
+                <h2>📹 Live Camera Feed</h2>
+                <iframe
+                        src="http://192.168.0.232:8000/hls_stream/stream.m3u8"
+                        width="640"
+                        height="340"
+                        frameborder="0"
+                        allowfullscreen
+                        style="border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+                </iframe>
+            </section>
+
+                <!-- Actual HLS Video Player -->
+                <video
+                        class="video-feed"
+                        id="authVideoPlayer"
+                        autoplay
+                        muted
+                        playsinline
+                        style="display: none;">
+                </video>
+
+                <!-- Video Overlay with Info -->
+                <div class="video-overlay">
+                    <div class="recording-indicator">
+                        <span class="rec-dot"></span>
+                        <span>LIVE</span>
+                    </div>
+                    <div class="video-timer" id="videoTimer">2:00</div>
+                </div>
+
+                <!-- Video Info Display -->
+                <div class="video-info-overlay">
+                    <div class="info-row-overlay">
+                        <span class="info-label">Driver:</span>
+                        <span id="feedDriverName" class="info-value-overlay"></span>
+                    </div>
+                    <div class="info-row-overlay">
+                        <span class="info-label">Vehicle:</span>
+                        <span id="feedVehicleId" class="info-value-overlay"></span>
+                    </div>
+                    <div class="info-row-overlay">
+                        <span class="info-label">Location:</span>
+                        <span id="feedLocation" class="info-value-overlay"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="video-controls">
+                <button class="video-btn approve-btn" id="approveBtn">
+                    <span>✓</span> Approve Authentication
+                </button>
+                <button class="video-btn deny-btn" id="denyBtn">
+                    <span>✕</span> Deny Access
+                </button>
+            </div>
+
+            <div class="auth-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p class="progress-text">Authentication time remaining: <span id="authTimeRemaining">120s</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet JS Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+<!-- HLS.js Library for Video Streaming -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<!-- Link to external JavaScript -->
+<script src="script2.js"></script>
+
+</body>
+</html>
