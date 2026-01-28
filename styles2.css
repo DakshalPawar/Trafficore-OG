@@ -1103,3 +1103,86 @@ body {
     .video-controls {
         flex-direction: column;
     }
+}
+
+/* Prevent iframe from blocking clicks */
+.video-feed-container iframe {
+    pointer-events: none; /* Iframe won't block clicks below it */
+}
+
+/* Ensure overlays don't block buttons either */
+.video-overlay,
+.video-info-overlay {
+    pointer-events: none;
+}
+
+/* Make sure buttons are above everything and clickable */
+.video-controls {
+    position: relative;
+    z-index: 1000;
+    margin-top: 20px;
+    pointer-events: auto; /* Buttons ARE clickable */
+}
+
+.video-btn {
+    pointer-events: auto; /* Force buttons to be clickable */
+    cursor: pointer;
+}
+
+/* Ensure modal content has proper stacking */
+.video-modal-body {
+    position: relative;
+    z-index: 1;
+}
+
+.video-feed-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+/* CRITICAL: Make iframe transparent to clicks */
+.video-feed-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.video-feed-container iframe {
+    pointer-events: none !important; /* Force iframe to not block clicks */
+}
+
+/* Make overlays transparent to clicks too */
+.video-overlay {
+    pointer-events: none !important;
+}
+
+.video-info-overlay {
+    pointer-events: none !important;
+}
+
+/* IMPORTANT: Make buttons fully clickable */
+.video-controls {
+    position: relative;
+    z-index: 9999 !important; /* Very high z-index */
+    pointer-events: auto !important; /* Force buttons to be clickable */
+    margin-top: 20px;
+}
+
+.video-btn {
+    pointer-events: auto !important; /* Each button is clickable */
+    cursor: pointer !important; /* Show pointer cursor */
+    position: relative;
+    z-index: 10000;
+}
+
+/* Also fix the close button */
+.close-video-modal {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    z-index: 10000;
+}
+
+/* Make sure modal header is clickable */
+.video-modal-header {
+    pointer-events: auto !important;
+    z-index: 9999;
+}
