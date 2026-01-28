@@ -224,7 +224,7 @@
 
 </div>
 
-<!-- VIDEO AUTHENTICATION MODAL WITH REAL HLS STREAM -->
+<!-- VIDEO AUTHENTICATION MODAL - FIXED BUTTON CLICKS -->
 <div class="video-modal" id="videoModal">
     <div class="video-modal-content">
         <div class="video-modal-header">
@@ -239,30 +239,19 @@
             </div>
 
             <!-- Real HLS Video Feed Container -->
-            <section id="camera-feed">
-                <h2>📹 Live Camera Feed</h2>
+            <div class="video-feed-container">
+                <!-- YOUR WORKING IFRAME - NOT CHANGED! -->
                 <iframe
-                        src="http://192.168.0.232:8000/hls_stream/stream.m3u8"
-                        width="640"
-                        height="340"
+                        src="http://192.168.0.175:8000/hls_stream/stream.m3u8"
+                        width="100%"
+                        height="400"
                         frameborder="0"
                         allowfullscreen
-                        style="border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+                        style="border-radius: 10px; display: block; pointer-events: none;">
                 </iframe>
-            </section>
-
-                <!-- Actual HLS Video Player -->
-                <video
-                        class="video-feed"
-                        id="authVideoPlayer"
-                        autoplay
-                        muted
-                        playsinline
-                        style="display: none;">
-                </video>
 
                 <!-- Video Overlay with Info -->
-                <div class="video-overlay">
+                <div class="video-overlay" style="pointer-events: none;">
                     <div class="recording-indicator">
                         <span class="rec-dot"></span>
                         <span>LIVE</span>
@@ -271,7 +260,7 @@
                 </div>
 
                 <!-- Video Info Display -->
-                <div class="video-info-overlay">
+                <div class="video-info-overlay" style="pointer-events: none;">
                     <div class="info-row-overlay">
                         <span class="info-label">Driver:</span>
                         <span id="feedDriverName" class="info-value-overlay"></span>
@@ -287,7 +276,8 @@
                 </div>
             </div>
 
-            <div class="video-controls">
+            <!-- BUTTONS ARE NOW OUTSIDE THE IFRAME CONTAINER -->
+            <div class="video-controls" style="margin-top: 20px; position: relative; z-index: 1000;">
                 <button class="video-btn approve-btn" id="approveBtn">
                     <span>✓</span> Approve Authentication
                 </button>
