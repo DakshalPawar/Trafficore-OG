@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trafficore – Emergency Medical Coordination</title>
+  <style>
+/* ═══════════════════════════════════════════════════════════
+   TRAFFICORE – Emergency Medical Coordination System
+   style.css  |  Dark Medical Emergency Theme
+   Fonts: Rajdhani (headings) · Nunito (body) · IBM Plex Mono (data)
+═══════════════════════════════════════════════════════════ */
+
+/* ── CSS Custom Properties ─────────────────────────────── */
+:root {
+  --bg-base:       #050a12;
+  --bg-panel:      #0b1120;
+  --bg-section:    #0f1829;
+  --bg-card:       #111d30;
+  --bg-input:      #0d1624;
+  --bg-hover:      #162038;
+
+  --border-subtle: rgba(255,255,255,0.05);
+  --border-med:    rgba(255,255,255,0.10);
+  --border-accent: rgba(59,130,246,0.30);
+
+  --blue-bright:   #3b82f6;
+  --blue-dim:      #1d4ed8;
+  --blue-glow:     rgba(59,130,246,0.18);
+  --red-bright:    #ef4444;
+  --red-dim:       #b91c1c;
+  --red-glow:      rgba(239,68,68,0.18);
+  --green-bright:  #22c55e;
+  --green-dim:     #15803d;
+  --amber-bright:  #f59e0b;
+  --amber-dim:     #b45309;
+
+  --text-primary:  #e8edf5;
+  --text-secondary:#8fa3bf;
+  --text-muted:    #4a637d;
+
+  --font-display:  'Rajdhani', sans-serif;
+  --font-body:     'Nunito', sans-serif;
+  --font-mono:     'IBM Plex Mono', monospace;
+
+  --radius-sm:     8px;
+  --radius-md:     12px;
+  --radius-lg:     16px;
+  --radius-xl:     22px;
+
+  --shadow-card:   0 4px 32px rgba(0,0,0,0.5);
+  --shadow-glow-blue: 0 0 24px rgba(59,130,246,0.12);
+  --shadow-glow-red:  0 0 24px rgba(239,68,68,0.15);
+
+  --transition:    all 0.22s ease;
+}
+
+/* ── Reset & Base ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  font-size: 15.5px;
+  line-height: 1.6;
+  /* Subtle grid texture */
+  background-image:
+    linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  overflow-x: hidden;
+}
+
+/* ── Ambient background glows ──────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  top: -100px; left: -100px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(29,78,216,0.08) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -100px; right: -100px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(185,28,28,0.07) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════════════════════ */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+  height: 64px;
+  background: rgba(5,10,18,0.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 0 rgba(59,130,246,0.08), 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.header-brand { display: flex; align-items: center; gap: 12px; }
+
+.brand-icon {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--red-dim), var(--blue-dim));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700; font-size: 15px; color: #fff;
+  box-shadow: 0 2px 12px rgba(239,68,68,0.4), 0 0 0 1px rgba(255,255,255,0.08);
+  letter-spacing: -1px;
+}
+.brand-icon .cross { color: #7dd3fc; }
+
+.brand-text h1 {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 700;
+  color: #fff; letter-spacing: 0.5px;
+  line-height: 1.1;
+}
+.brand-text span {
+  font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text-muted);
+}
+
+.header-status { display: flex; align-items: center; gap: 16px; }
+
+.clock-block { text-align: right; }
+.live-clock {
+  font-family: var(--font-mono);
+  font-size: 16px; font-weight: 600;
+  color: var(--blue-bright); letter-spacing: 2px;
+  text-shadow: 0 0 12px rgba(59,130,246,0.5);
+}
+.live-date { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+.status-pill {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px 14px;
+  background: rgba(34,197,94,0.08);
+  border: 1px solid rgba(34,197,94,0.25);
+  border-radius: 40px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; color: var(--green-bright);
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PULSE DOTS
+══════════════════════════════════════════════════════════ */
+.pulse-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green-bright);
+  box-shadow: 0 0 6px var(--green-bright);
+  position: relative;
+  flex-shrink: 0;
+}
+.pulse-dot::after {
+  content: '';
+  position: absolute; inset: -4px;
+  border-radius: 50%;
+  background: var(--green-bright);
+  opacity: 0.3;
+  animation: pulseRing 1.6s ease-out infinite;
+}
+.pulse-dot.red { background: var(--red-bright); box-shadow: 0 0 6px var(--red-bright); }
+.pulse-dot.red::after { background: var(--red-bright); }
+.pulse-dot.green { background: var(--green-bright); box-shadow: 0 0 6px var(--green-bright); }
+
+@keyframes pulseRing {
+  0%   { transform: scale(1); opacity: 0.4; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD LAYOUT
+══════════════════════════════════════════════════════════ */
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px 24px 32px;
+  max-width: 1440px;
+  margin: 0 auto;
+  position: relative; z-index: 1;
+}
+
+@media (max-width: 960px) {
+  .dashboard { grid-template-columns: 1fr; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   PANEL (shared left/right shell)
+══════════════════════════════════════════════════════════ */
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  display: flex; flex-direction: column;
+  transition: var(--transition);
+  position: relative;
+}
+
+.panel-left { border-top: 2px solid var(--red-dim); }
+.panel-right { border-top: 2px solid var(--blue-dim); }
+
+.panel-left:hover { box-shadow: var(--shadow-card), var(--shadow-glow-red); }
+.panel-right:hover { box-shadow: var(--shadow-card), var(--shadow-glow-blue); }
+
+/* Panel Header */
+.panel-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px;
+  background: var(--bg-section);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.panel-icon { font-size: 22px; }
+.panel-title {
+  font-family: var(--font-display);
+  font-size: 15px; font-weight: 700;
+  color: #fff; letter-spacing: 0.5px;
+}
+.panel-subtitle { font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; }
+
+.unit-badge {
+  margin-left: auto;
+  padding: 5px 12px;
+  border-radius: 40px;
+  background: rgba(239,68,68,0.10);
+  border: 1px solid rgba(239,68,68,0.25);
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  color: var(--red-bright);
+  display: flex; align-items: center; gap: 6px;
+  text-transform: uppercase;
+}
+.live-badge { animation: badgePulse 2s ease-in-out infinite; }
+
+@keyframes badgePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   FORM SECTIONS
+══════════════════════════════════════════════════════════ */
+#ambulance-form {
+  padding: 12px 20px 20px;
+  display: flex; flex-direction: column; gap: 4px;
+  flex: 1; overflow-y: auto;
+}
+
+.form-section {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.form-section:last-of-type { border-bottom: none; }
+
+.section-label {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.section-icon { font-size: 14px; }
+
+/* Field layout */
+.form-row { display: flex; gap: 10px; }
+.form-row .field { flex: 1; }
+.form-row .field-sm { flex: 0 0 100px; }
+
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.field:last-child { margin-bottom: 0; }
+
+label {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.8px; color: var(--text-secondary);
+  text-transform: uppercase;
+}
+.req { color: var(--red-bright); }
+
+/* Inputs */
+input[type="text"],
+input[type="tel"],
+input[type="number"],
+input[type="time"],
+select, textarea {
+  background: var(--bg-input);
+  border: 1px solid var(--border-med);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  outline: none;
+  transition: var(--transition);
+  width: 100%;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--blue-bright);
+  background: var(--bg-hover);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+}
+
+input::placeholder, textarea::placeholder { color: var(--text-muted); font-style: italic; }
+select option { background: #0f1829; }
+textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+
+/* Validation error */
+.err {
+  font-size: 10px; color: var(--red-bright);
+  letter-spacing: 0.5px; min-height: 14px;
+  display: block;
+}
+
+/* Vitals grid (form side) */
+.vitals-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.vital-input-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 5px;
+  transition: var(--transition);
+}
+.vital-input-card:hover { border-color: var(--border-accent); }
+
+.vital-label {
+  font-size: 11px; font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px; text-transform: uppercase;
+}
+.vital-field {
+  background: var(--bg-input) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #fff !important;
+}
+.vital-hint {
+  font-size: 10px; color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Send button */
+.send-btn {
+  margin-top: 14px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, var(--red-dim) 0%, #7f1d1d 100%);
+  border: 1px solid rgba(239,68,68,0.4);
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  cursor: pointer;
+  position: relative; overflow: hidden;
+  transition: var(--transition);
+  box-shadow: 0 4px 20px rgba(185,28,28,0.5);
+}
+.send-btn:hover {
+  background: linear-gradient(135deg, var(--red-bright) 0%, var(--red-dim) 100%);
+  box-shadow: 0 6px 30px rgba(239,68,68,0.5);
+  transform: translateY(-1px);
+}
+.send-btn:active { transform: translateY(0); }
+
+.btn-flash {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  transform: translateX(-100%);
+  animation: btnShine 3s ease-in-out infinite;
+}
+@keyframes btnShine {
+  0%, 60% { transform: translateX(-100%); }
+  80%       { transform: translateX(100%); }
+  100%      { transform: translateX(100%); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   HOSPITAL PANEL – IDLE STATE
+══════════════════════════════════════════════════════════ */
+.idle-state {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  flex: 1; padding: 48px 32px;
+  text-align: center;
+}
+.idle-icon {
+  font-size: 52px; margin-bottom: 16px;
+  opacity: 0.4;
+  animation: idleFloat 3s ease-in-out infinite;
+}
+@keyframes idleFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+.idle-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--text-secondary); letter-spacing: 1px; }
+.idle-sub { font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.8; }
+.idle-sub strong { color: var(--red-bright); }
+
+/* ══════════════════════════════════════════════════════════
+   HOSPITAL DATA PANEL
+══════════════════════════════════════════════════════════ */
+.hospital-data {
+  padding: 14px 18px 20px;
+  display: flex; flex-direction: column; gap: 14px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Received banner */
+.received-banner {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 14px;
+  background: rgba(34,197,94,0.06);
+  border: 1px solid rgba(34,197,94,0.20);
+  border-radius: var(--radius-sm);
+  font-size: 11px; color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  animation: slideDown 0.4s ease;
+}
+.received-banner strong { color: var(--green-bright); }
+
+/* Data cards */
+.data-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  animation: cardReveal 0.5s ease both;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.data-card:hover { border-color: var(--border-accent); box-shadow: var(--shadow-glow-blue); }
+
+.data-card-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px;
+  background: var(--bg-section);
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--font-display);
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.data-card-body { padding: 14px 16px; }
+
+/* Data grid inside cards */
+.data-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+.mt-8 { margin-top: 10px; }
+
+.data-item {
+  background: var(--bg-section);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+}
+.d-label {
+  display: block;
+  font-size: 10px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 3px;
+}
+.d-value {
+  font-family: var(--font-mono);
+  font-size: 13px; font-weight: 500; color: var(--text-primary);
+}
+.d-value.blood { color: var(--red-bright); font-size: 16px; font-weight: 700; }
+.d-value.mono { font-family: var(--font-mono); color: var(--blue-bright); }
+
+/* Incident description */
+.incident-desc {
+  background: rgba(239,68,68,0.06);
+  border: 1px solid rgba(239,68,68,0.18);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 13px; line-height: 1.7;
+  color: var(--text-primary);
+  font-style: italic;
+}
+
+/* Vitals display grid */
+.vitals-display-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.vital-display-card {
+  background: var(--bg-section);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: center;
+  border: 1px solid var(--border-subtle);
+  transition: var(--transition);
+  position: relative; overflow: hidden;
+}
+
+.vd-icon { font-size: 18px; margin-bottom: 5px; }
+.vd-value {
+  font-family: var(--font-mono);
+  font-size: 18px; font-weight: 700;
+  color: #fff;
+  letter-spacing: 1px;
+}
+.vd-label {
+  font-size: 10px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-muted);
+  margin-top: 3px;
+}
+.vd-status-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--text-muted);
+  transition: background 0.4s ease;
+}
+
+/* Vital status classes */
+.status-normal  { border-color: rgba(34,197,94,0.35) !important; background: rgba(34,197,94,0.05) !important; }
+.status-normal  .vd-value { color: var(--green-bright); text-shadow: 0 0 12px rgba(34,197,94,0.4); }
+.status-normal  .vd-status-bar { background: var(--green-bright); box-shadow: 0 0 6px var(--green-bright); }
+
+.status-warning { border-color: rgba(245,158,11,0.35) !important; background: rgba(245,158,11,0.05) !important; }
+.status-warning .vd-value { color: var(--amber-bright); text-shadow: 0 0 12px rgba(245,158,11,0.4); }
+.status-warning .vd-status-bar { background: var(--amber-bright); box-shadow: 0 0 6px var(--amber-bright); }
+.status-warning .vital-display-card { animation: subtlePulse 2s ease-in-out infinite; }
+
+.status-critical { border-color: rgba(239,68,68,0.45) !important; background: rgba(239,68,68,0.07) !important; }
+.status-critical .vd-value { color: var(--red-bright); text-shadow: 0 0 12px rgba(239,68,68,0.5); }
+.status-critical .vd-status-bar { background: var(--red-bright); box-shadow: 0 0 8px var(--red-bright); animation: criticalBlink 1s ease-in-out infinite; }
+
+@keyframes subtlePulse {
+  0%, 100% { box-shadow: none; }
+  50% { box-shadow: 0 0 16px rgba(245,158,11,0.2); }
+}
+@keyframes criticalBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Vitals overall label */
+.vitals-status-label {
+  margin-left: auto;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 20px;
+}
+.level-normal   { background: rgba(34,197,94,0.12);  color: var(--green-bright); border: 1px solid rgba(34,197,94,0.3); }
+.level-warning  { background: rgba(245,158,11,0.12); color: var(--amber-bright); border: 1px solid rgba(245,158,11,0.3); }
+.level-critical { background: rgba(239,68,68,0.12);  color: var(--red-bright);   border: 1px solid rgba(239,68,68,0.3); }
+
+/* Emergency badge in panel header */
+#emergency-level-badge {
+  font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; font-weight: 700;
+}
+#emergency-level-badge.level-normal   { background: rgba(34,197,94,0.10);  color: var(--green-bright); border-color: rgba(34,197,94,0.3); }
+#emergency-level-badge.level-warning  { background: rgba(245,158,11,0.10); color: var(--amber-bright); border-color: rgba(245,158,11,0.3); }
+#emergency-level-badge.level-critical { background: rgba(239,68,68,0.12);  color: var(--red-bright);   border-color: rgba(239,68,68,0.35);
+  animation: badgePulse 1.2s ease-in-out infinite; }
+
+/* Message bubble */
+.message-bubble {
+  background: rgba(59,130,246,0.08);
+  border: 1px solid rgba(59,130,246,0.20);
+  border-left: 3px solid var(--blue-bright);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 12px 16px;
+  font-size: 13px; line-height: 1.7;
+  color: var(--text-primary);
+  font-style: italic;
+}
+
+/* ══════════════════════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════════════════════ */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.data-card:nth-child(2) { animation-delay: 0.08s; }
+.data-card:nth-child(3) { animation-delay: 0.16s; }
+.data-card:nth-child(4) { animation-delay: 0.24s; }
+.data-card:nth-child(5) { animation-delay: 0.32s; }
+
+/* ══════════════════════════════════════════════════════════
+   TOAST NOTIFICATION
+══════════════════════════════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: 13px; font-weight: 600;
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  z-index: 9999;
+  transform: translateY(80px); opacity: 0;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: linear-gradient(135deg, #15803d, #166534); border: 1px solid rgba(34,197,94,0.4); }
+.toast.error   { background: linear-gradient(135deg, #b91c1c, #7f1d1d); border: 1px solid rgba(239,68,68,0.4); }
+
+/* ══════════════════════════════════════════════════════════
+   TRANSMISSION FLASH OVERLAY
+══════════════════════════════════════════════════════════ */
+.tx-flash {
+  position: fixed; inset: 0; z-index: 9998;
+  background: rgba(239,68,68,0.08);
+  pointer-events: none; opacity: 0;
+  transition: opacity 0.1s ease;
+}
+.tx-flash.active { opacity: 1; }
+
+/* ══════════════════════════════════════════════════════════
+   SCROLLBAR STYLING
+══════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-med); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-accent); }
+
+/* ══════════════════════════════════════════════════════════
+   LOCATION INPUT WITH BUTTON
+══════════════════════════════════════════════════════════ */
+.location-input-wrap {
+  display: flex; gap: 8px; align-items: stretch;
+}
+.location-input-wrap input {
+  flex: 1;
+}
+.use-location-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 12px;
+  background: rgba(59,130,246,0.10);
+  border: 1px solid rgba(59,130,246,0.30);
+  border-radius: var(--radius-sm);
+  color: var(--blue-bright);
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase;
+  cursor: pointer; white-space: nowrap;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+.use-location-btn:hover {
+  background: rgba(59,130,246,0.20);
+  border-color: var(--blue-bright);
+  box-shadow: 0 0 12px rgba(59,130,246,0.20);
+}
+.use-location-btn.loading { opacity: 0.7; pointer-events: none; }
+.loc-icon { font-size: 14px; }
+.loc-text { font-size: 11px; }
+
+/* ══════════════════════════════════════════════════════════
+   CALL HOSPITAL BUTTON
+══════════════════════════════════════════════════════════ */
+.call-hospital-btn {
+  margin-top: 10px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%;
+  padding: 11px 20px;
+  background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(21,128,61,0.20) 100%);
+  border: 1px solid rgba(34,197,94,0.40);
+  border-radius: var(--radius-md);
+  color: var(--green-bright);
+  font-family: var(--font-display);
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  cursor: pointer;
+  position: relative; overflow: hidden;
+  transition: var(--transition);
+  box-shadow: 0 2px 16px rgba(34,197,94,0.12);
+}
+.call-hospital-btn:hover {
+  background: linear-gradient(135deg, rgba(34,197,94,0.25) 0%, rgba(21,128,61,0.35) 100%);
+  box-shadow: 0 4px 24px rgba(34,197,94,0.28);
+  transform: translateY(-1px);
+  border-color: var(--green-bright);
+}
+.call-hospital-btn:active { transform: translateY(0); }
+.call-icon { font-size: 16px; animation: callRing 2.5s ease-in-out infinite; }
+@keyframes callRing {
+  0%, 90%, 100% { transform: rotate(0deg); }
+  92%  { transform: rotate(-15deg); }
+  96%  { transform: rotate(15deg); }
+  98%  { transform: rotate(-10deg); }
+}
+.call-ripple {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at center, rgba(34,197,94,0.15) 0%, transparent 70%);
+  opacity: 0;
+  animation: callGlow 2.5s ease-in-out infinite;
+}
+@keyframes callGlow {
+  0%, 100% { opacity: 0; }
+  50%       { opacity: 1; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .site-header { padding: 0 16px; }
+  .clock-block { display: none; }
+  .dashboard { padding: 12px; gap: 14px; }
+  .vitals-grid { grid-template-columns: 1fr 1fr; }
+  .form-row { flex-direction: column; }
+  .form-row .field-sm { flex: 1; }
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   CHAT WIDGET
+══════════════════════════════════════════════════════════ */
+
+/* FAB button */
+.chat-fab {
+  position: fixed;
+  bottom: 28px; right: 28px;
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue-dim), #0f2f6e);
+  border: 2px solid rgba(59,130,246,0.5);
+  box-shadow: 0 4px 24px rgba(59,130,246,0.4), 0 0 0 0 rgba(59,130,246,0.3);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  z-index: 8000;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: fabPulse 3s ease-in-out infinite;
+}
+.chat-fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 32px rgba(59,130,246,0.6), 0 0 0 8px rgba(59,130,246,0.12);
+}
+.chat-fab-icon { font-size: 24px; line-height: 1; }
+@keyframes fabPulse {
+  0%,100% { box-shadow: 0 4px 24px rgba(59,130,246,0.4), 0 0 0 0 rgba(59,130,246,0.3); }
+  50%      { box-shadow: 0 4px 24px rgba(59,130,246,0.4), 0 0 0 10px rgba(59,130,246,0); }
+}
+
+/* Unread badge */
+.chat-fab-badge {
+  position: absolute; top: -4px; right: -4px;
+  min-width: 20px; height: 20px;
+  background: var(--red-bright);
+  border: 2px solid var(--bg-base);
+  border-radius: 10px;
+  font-size: 10px; font-weight: 700;
+  color: #fff; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 4px;
+}
+
+/* Popup window */
+.chat-popup {
+  position: fixed;
+  bottom: 100px; right: 28px;
+  width: 360px;
+  max-height: 520px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 16px 64px rgba(0,0,0,0.7), 0 0 0 1px rgba(59,130,246,0.1);
+  display: flex; flex-direction: column;
+  z-index: 7999;
+  overflow: hidden;
+  transform: scale(0.85) translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), opacity 0.22s ease;
+  transform-origin: bottom right;
+}
+.chat-popup.open {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Chat header */
+.chat-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--bg-section);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+.chat-header-left { display: flex; align-items: center; gap: 10px; }
+.chat-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue-dim), #0f2f6e);
+  border: 1px solid rgba(59,130,246,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.chat-title {
+  font-family: var(--font-display);
+  font-size: 14px; font-weight: 700; color: #fff; letter-spacing: 0.3px;
+}
+.chat-online {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; color: var(--green-bright); letter-spacing: 0.5px;
+  margin-top: 1px;
+}
+.chat-close {
+  background: none; border: none; color: var(--text-muted);
+  font-size: 14px; cursor: pointer; padding: 4px 8px; border-radius: 6px;
+  transition: var(--transition); line-height: 1;
+}
+.chat-close:hover { background: rgba(255,255,255,0.06); color: var(--text-primary); }
+
+/* Messages area */
+.chat-messages {
+  flex: 1; overflow-y: auto;
+  padding: 14px 14px 8px;
+  display: flex; flex-direction: column; gap: 10px;
+  scroll-behavior: smooth;
+}
+.chat-system-msg {
+  text-align: center;
+  font-size: 10px; letter-spacing: 0.8px;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px; padding: 5px 14px;
+  align-self: center;
+}
+
+/* Message bubbles */
+.chat-msg { display: flex; flex-direction: column; max-width: 82%; }
+.chat-msg.paramedic { align-self: flex-end; align-items: flex-end; }
+.chat-msg.doctor    { align-self: flex-start; align-items: flex-start; }
+
+.msg-bubble {
+  padding: 9px 13px;
+  border-radius: 16px;
+  font-size: 13px; line-height: 1.5;
+  word-break: break-word;
+  animation: msgPop 0.2s ease both;
+}
+@keyframes msgPop {
+  from { transform: scale(0.92); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+.chat-msg.paramedic .msg-bubble {
+  background: linear-gradient(135deg, var(--red-dim), #7f1d1d);
+  border: 1px solid rgba(239,68,68,0.30);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.chat-msg.doctor .msg-bubble {
+  background: linear-gradient(135deg, rgba(29,78,216,0.25), rgba(15,47,110,0.30));
+  border: 1px solid rgba(59,130,246,0.25);
+  color: var(--text-primary);
+  border-bottom-left-radius: 4px;
+}
+.msg-meta {
+  font-size: 9px; color: var(--text-muted);
+  margin-top: 3px; letter-spacing: 0.4px;
+}
+
+/* Sender toggle */
+.chat-sender-toggle {
+  display: flex; gap: 6px;
+  padding: 8px 12px 0;
+}
+.sender-btn {
+  flex: 1;
+  padding: 5px 8px;
+  border-radius: 20px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
+  cursor: pointer; border: 1px solid var(--border-med);
+  background: transparent; color: var(--text-muted);
+  transition: var(--transition); font-family: var(--font-display);
+  text-transform: uppercase;
+}
+.sender-btn.active {
+  background: rgba(59,130,246,0.15);
+  border-color: rgba(59,130,246,0.45);
+  color: var(--blue-bright);
+}
+.sender-btn[data-role="paramedic"].active {
+  background: rgba(239,68,68,0.12);
+  border-color: rgba(239,68,68,0.40);
+  color: var(--red-bright);
+}
+
+/* Compose row */
+.chat-compose {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px 12px;
+}
+#chat-input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border-med);
+  border-radius: 20px;
+  padding: 8px 14px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 13px; outline: none;
+  transition: var(--transition);
+}
+#chat-input:focus {
+  border-color: var(--blue-bright);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+}
+#chat-input::placeholder { color: var(--text-muted); }
+.chat-send-btn {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--blue-dim), #0f2f6e);
+  border: 1px solid rgba(59,130,246,0.4);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: var(--transition);
+}
+.chat-send-btn:hover {
+  background: linear-gradient(135deg, var(--blue-bright), var(--blue-dim));
+  box-shadow: 0 0 16px rgba(59,130,246,0.4);
+  transform: scale(1.08);
+}
+
+@media (max-width: 480px) {
+  .chat-popup { width: calc(100vw - 32px); right: 16px; bottom: 90px; }
+  .chat-fab   { right: 16px; bottom: 16px; }
+}
+
+</style>
+  <!-- Distinctive font pairing: Rajdhani (display) + IBM Plex Mono (data) + Nunito (body) -->
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-brand">
+      <div class="brand-icon">T<span class="cross">+</span></div>
+      <div class="brand-text">
+        <h1>Trafficore</h1>
+        <span>Emergency Medical Coordination System</span>
+      </div>
+    </div>
+
+    <div class="header-status">
+      <!-- Live clock -->
+      <div class="clock-block">
+        <div id="live-clock" class="live-clock">--:--:--</div>
+        <div id="live-date" class="live-date">--- --, ----</div>
+      </div>
+      <!-- System status -->
+      <div class="status-pill" id="system-status">
+        <span class="pulse-dot"></span>
+        <span id="status-text">SYSTEM ONLINE</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════
+       MAIN LAYOUT
+  ═══════════════════════════════════════════════ -->
+  <main class="dashboard">
+
+    <!-- ──────────────────────────────────────────
+         LEFT PANEL – Ambulance Input
+    ────────────────────────────────────────────── -->
+    <section class="panel panel-left" id="ambulance-panel">
+
+      <!-- Panel header -->
+      <div class="panel-header">
+        <div class="panel-icon">🚑</div>
+        <div>
+          <div class="panel-title">Ambulance Unit</div>
+          <div class="panel-subtitle" id="amb-unit-id">Unit ID: AMB-DL-047</div>
+        </div>
+        <div class="unit-badge live-badge">
+          <span class="pulse-dot red"></span> TRANSMITTING
+        </div>
+      </div>
+
+      <!-- FORM -->
+      <form id="ambulance-form" novalidate>
+
+        <!-- ── A) Patient Personal Info ─────────── -->
+        <div class="form-section">
+          <div class="section-label">
+            <span class="section-icon">👤</span>
+            Patient Personal Information
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="p-name">Full Name <span class="req">*</span></label>
+              <input type="text" id="p-name" placeholder="e.g. Rajesh Kumar" autocomplete="off" />
+              <span class="err" id="err-name"></span>
+            </div>
+            <div class="field">
+              <label for="p-phone">Phone Number <span class="req">*</span></label>
+              <input type="tel" id="p-phone" placeholder="9876543210" maxlength="10" pattern="[0-9]{10}" inputmode="numeric" />
+              <span class="err" id="err-phone"></span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field field-sm">
+              <label for="p-age">Age <span class="req">*</span></label>
+              <input type="number" id="p-age" placeholder="47" min="0" max="120" />
+              <span class="err" id="err-age"></span>
+            </div>
+            <div class="field field-sm">
+              <label for="p-gender">Gender</label>
+              <select id="p-gender">
+                <option value="">Select</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field field-sm">
+              <label for="p-blood">Blood Group</label>
+              <select id="p-blood">
+                <option value="">Select</option>
+                <option>A+</option><option>A−</option>
+                <option>B+</option><option>B−</option>
+                <option>AB+</option><option>AB−</option>
+                <option>O+</option><option>O−</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── B) Incident Information ────────────── -->
+        <div class="form-section">
+          <div class="section-label">
+            <span class="section-icon">🚨</span>
+            Incident Information
+          </div>
+
+          <div class="field">
+            <label for="i-desc">Incident Description <span class="req">*</span></label>
+            <textarea id="i-desc" rows="3" placeholder="Describe what happened..."></textarea>
+            <span class="err" id="err-desc"></span>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="i-loc">Location</label>
+              <div class="location-input-wrap">
+                <input type="text" id="i-loc" placeholder="e.g. NH-48, Gurugram" />
+                <button type="button" class="use-location-btn" id="use-location-btn" title="Use my current location">
+                  <span class="loc-icon">📍</span>
+                  <span class="loc-text">Use my location</span>
+                </button>
+              </div>
+            </div>
+            <div class="field field-sm">
+              <label for="i-time">Time of Incident</label>
+              <input type="time" id="i-time" />
+            </div>
+          </div>
+        </div>
+
+        <!-- ── C) Patient Vitals ───────────────────── -->
+        <div class="form-section">
+          <div class="section-label">
+            <span class="section-icon">📊</span>
+            Patient Vitals
+          </div>
+
+          <div class="vitals-grid">
+            <div class="vital-input-card">
+              <label class="vital-label" for="v-bp">🩺 Blood Pressure</label>
+              <input type="text" id="v-bp" placeholder="120/80 mmHg" class="vital-field" />
+              <span class="vital-hint">Normal: 90–120 / 60–80</span>
+            </div>
+            <div class="vital-input-card">
+              <label class="vital-label" for="v-hr">❤️ Heart Rate</label>
+              <input type="number" id="v-hr" placeholder="72 bpm" min="0" max="300" class="vital-field" />
+              <span class="vital-hint">Normal: 60–100 bpm</span>
+            </div>
+            <div class="vital-input-card">
+              <label class="vital-label" for="v-spo2">🫁 Oxygen Level (SpO₂)</label>
+              <input type="number" id="v-spo2" placeholder="98 %" min="0" max="100" class="vital-field" />
+              <span class="vital-hint">Normal: ≥ 95%</span>
+            </div>
+            <div class="vital-input-card">
+              <label class="vital-label" for="v-temp">🌡️ Temperature</label>
+              <input type="number" id="v-temp" placeholder="37.0 °C" step="0.1" min="30" max="45" class="vital-field" />
+              <span class="vital-hint">Normal: 36.1–37.2 °C</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── D) Call Hospital ─────────────── -->
+        <div class="form-section" style="border-bottom:none;">
+          <button type="button" class="call-hospital-btn" id="call-hospital-btn">
+            <span class="call-icon">📞</span>
+            <span class="call-label">CALL HOSPITAL</span>
+            <span class="call-ripple"></span>
+          </button>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="send-btn" id="send-btn">
+          <span class="btn-icon">📡</span>
+          <span class="btn-label">TRANSMIT TO HOSPITAL</span>
+          <span class="btn-flash"></span>
+        </button>
+
+      </form>
+    </section><!-- end panel-left -->
+
+    <!-- ──────────────────────────────────────────
+         RIGHT PANEL – Hospital View
+    ────────────────────────────────────────────── -->
+    <section class="panel panel-right" id="hospital-panel">
+
+      <!-- Panel header -->
+      <div class="panel-header">
+        <div class="panel-icon">🏥</div>
+        <div>
+          <div class="panel-title">Hospital Control Room</div>
+          <div class="panel-subtitle">AIIMS Emergency Reception</div>
+        </div>
+        <div class="unit-badge" id="emergency-level-badge">
+          <span>AWAITING DATA</span>
+        </div>
+      </div>
+
+      <!-- Idle state (shown before first submission) -->
+      <div class="idle-state" id="idle-state">
+        <div class="idle-icon">📡</div>
+        <p class="idle-title">Awaiting Transmission</p>
+        <p class="idle-sub">Fill the ambulance form and click<br /><strong>TRANSMIT TO HOSPITAL</strong></p>
+      </div>
+
+      <!-- Hospital data cards (hidden until data arrives) -->
+      <div class="hospital-data" id="hospital-data" style="display:none;">
+
+        <!-- Received timestamp -->
+        <div class="received-banner">
+          <span class="pulse-dot green"></span>
+          Data received at <strong id="recv-time">--:--:--</strong>
+          &nbsp;·&nbsp; Transmission #<strong id="recv-count">1</strong>
+        </div>
+
+        <!-- Patient Details Card -->
+        <div class="data-card" id="hc-patient">
+          <div class="data-card-header">
+            <span>👤</span> Patient Details
+          </div>
+          <div class="data-card-body">
+            <div class="data-grid">
+              <div class="data-item">
+                <span class="d-label">Full Name</span>
+                <span class="d-value" id="h-name">—</span>
+              </div>
+              <div class="data-item">
+                <span class="d-label">Phone</span>
+                <span class="d-value" id="h-phone">—</span>
+              </div>
+              <div class="data-item">
+                <span class="d-label">Age</span>
+                <span class="d-value" id="h-age">—</span>
+              </div>
+              <div class="data-item">
+                <span class="d-label">Gender</span>
+                <span class="d-value" id="h-gender">—</span>
+              </div>
+              <div class="data-item">
+                <span class="d-label">Blood Group</span>
+                <span class="d-value blood" id="h-blood">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Incident Details Card -->
+        <div class="data-card" id="hc-incident">
+          <div class="data-card-header">
+            <span>🚨</span> Incident Details
+          </div>
+          <div class="data-card-body">
+            <div class="incident-desc" id="h-desc">—</div>
+            <div class="data-grid mt-8">
+              <div class="data-item">
+                <span class="d-label">Location</span>
+                <span class="d-value" id="h-loc">—</span>
+              </div>
+              <div class="data-item">
+                <span class="d-label">Time of Incident</span>
+                <span class="d-value mono" id="h-time">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vitals Card -->
+        <div class="data-card" id="hc-vitals">
+          <div class="data-card-header">
+            <span>📊</span> Patient Vitals
+            <span class="vitals-status-label" id="vitals-overall-label">—</span>
+          </div>
+          <div class="data-card-body">
+            <div class="vitals-display-grid">
+              <div class="vital-display-card" id="vd-bp">
+                <div class="vd-icon">🩺</div>
+                <div class="vd-value" id="h-bp">—</div>
+                <div class="vd-label">Blood Pressure</div>
+                <div class="vd-status-bar"></div>
+              </div>
+              <div class="vital-display-card" id="vd-hr">
+                <div class="vd-icon">❤️</div>
+                <div class="vd-value" id="h-hr">—</div>
+                <div class="vd-label">Heart Rate</div>
+                <div class="vd-status-bar"></div>
+              </div>
+              <div class="vital-display-card" id="vd-spo2">
+                <div class="vd-icon">🫁</div>
+                <div class="vd-value" id="h-spo2">—</div>
+                <div class="vd-label">SpO₂</div>
+                <div class="vd-status-bar"></div>
+              </div>
+              <div class="vital-display-card" id="vd-temp">
+                <div class="vd-icon">🌡️</div>
+                <div class="vd-value" id="h-temp">—</div>
+                <div class="vd-label">Temperature</div>
+                <div class="vd-status-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div><!-- end hospital-data -->
+    </section><!-- end panel-right -->
+
+  </main><!-- end dashboard -->
+
+
+  <!-- ── Chat Widget ──────────────────────────── -->
+  <div class="chat-fab" id="chat-fab" title="Chat with Doctor">
+    <span class="chat-fab-icon">💬</span>
+    <span class="chat-fab-badge" id="chat-badge" style="display:none;">0</span>
+  </div>
+
+  <div class="chat-popup" id="chat-popup">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <div class="chat-avatar">🏥</div>
+        <div>
+          <div class="chat-title">Dr. Emergency Team</div>
+          <div class="chat-online"><span class="pulse-dot green" style="width:6px;height:6px;"></span> Online – AIIMS Reception</div>
+        </div>
+      </div>
+      <button class="chat-close" id="chat-close">✕</button>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      <div class="chat-system-msg">🔒 Secure channel established. Paramedic ↔ Hospital.</div>
+      <div class="chat-msg doctor">
+        <div class="msg-bubble">Receiving your data. Please keep this channel open. What is the patient's current condition?</div>
+        <div class="msg-meta">Dr. Team · Now</div>
+      </div>
+    </div>
+
+    <div class="chat-input-row">
+      <div class="chat-sender-toggle">
+        <button class="sender-btn active" id="btn-paramedic" data-role="paramedic">🚑 Paramedic</button>
+        <button class="sender-btn" id="btn-doctor" data-role="doctor">🏥 Doctor</button>
+      </div>
+      <div class="chat-compose">
+        <input type="text" id="chat-input" placeholder="Type a message…" autocomplete="off" />
+        <button class="chat-send-btn" id="chat-send-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast notification ────────────────────── -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ── Transmission flash overlay ──────────────── -->
+  <div class="tx-flash" id="tx-flash"></div>
+
+  <script>
+/* ═══════════════════════════════════════════════
+   TRAFFICORE – script.js
+═══════════════════════════════════════════════ */
+
+/* ── Live Clock ─────────────────────────────── */
+function updateClock() {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  document.getElementById('live-clock').textContent = `${hh}:${mm}:${ss}`;
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('live-date').textContent =
+    `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+/* ── Phone: digits only, max 10 ─────────────── */
+const phoneInput = document.getElementById('p-phone');
+phoneInput.addEventListener('input', () => {
+  let val = phoneInput.value.replace(/\D/g, '');
+  if (val.length > 10) val = val.slice(0, 10);
+  phoneInput.value = val;
+});
+phoneInput.addEventListener('keydown', (e) => {
+  const allowed = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'];
+  if (allowed.includes(e.key) || e.ctrlKey || e.metaKey) return;
+  if (!/^\d$/.test(e.key)) e.preventDefault();
+});
+
+/* ── Geolocation ────────────────────────────── */
+const locationBtn = document.getElementById('use-location-btn');
+const locationInput = document.getElementById('i-loc');
+
+locationBtn.addEventListener('click', () => {
+  if (!navigator.geolocation) {
+    showToast('⚠️ Geolocation not supported', 'error'); return;
+  }
+  locationBtn.classList.add('loading');
+  locationBtn.querySelector('.loc-text').textContent = 'Locating...';
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+        );
+        const data = await res.json();
+        const addr = data.address;
+        const parts = [addr.road || addr.pedestrian, addr.suburb || addr.neighbourhood,
+          addr.city || addr.town || addr.village, addr.state].filter(Boolean);
+        locationInput.value = parts.join(', ') || `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+      } catch {
+        locationInput.value = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+      }
+      locationBtn.classList.remove('loading');
+      locationBtn.querySelector('.loc-text').textContent = 'Use my location';
+      showToast('📍 Location detected', 'success');
+    },
+    (err) => {
+      locationBtn.classList.remove('loading');
+      locationBtn.querySelector('.loc-text').textContent = 'Use my location';
+      const msgs = {1:'Permission denied.',2:'Location unavailable.',3:'Request timed out.'};
+      showToast('⚠️ ' + (msgs[err.code] || 'Could not get location'), 'error');
+    },
+    { timeout: 8000 }
+  );
+});
+
+/* ── Call Hospital Button ───────────────────── */
+document.getElementById('call-hospital-btn').addEventListener('click', () => {
+  const link = document.createElement('a');
+  link.href = 'tel:+911800118';
+  link.click();
+  showToast('📞 Initiating call to hospital…', 'success');
+});
+
+/* ── Validation ─────────────────────────────── */
+let txCount = 0;
+function getVal(id) { return document.getElementById(id).value.trim(); }
+function setErr(id, msg) { document.getElementById(id).textContent = msg; }
+function clearErrors() {
+  ['err-name','err-phone','err-age','err-desc'].forEach(id => setErr(id, ''));
+}
+function validateForm() {
+  clearErrors(); let ok = true;
+  if (!getVal('p-name')) { setErr('err-name','⚠ Full name is required.'); ok = false; }
+  const phone = getVal('p-phone');
+  if (!phone) { setErr('err-phone','⚠ Phone number is required.'); ok = false; }
+  else if (!/^\d{10}$/.test(phone)) { setErr('err-phone','⚠ Must be exactly 10 digits.'); ok = false; }
+  const age = document.getElementById('p-age').value;
+  if (!age) { setErr('err-age','⚠ Age is required.'); ok = false; }
+  else if (+age < 0 || +age > 120) { setErr('err-age','⚠ Valid age: 0–120.'); ok = false; }
+  if (!getVal('i-desc')) { setErr('err-desc','⚠ Description is required.'); ok = false; }
+  return ok;
+}
+
+/* ── Vitals ─────────────────────────────────── */
+function assessVital(type, value) {
+  if (!value || value === '—') return 'unknown';
+  const v = parseFloat(value);
+  if (type === 'hr')   return v < 40 || v > 150 ? 'critical' : v < 60 || v > 100 ? 'warning' : 'normal';
+  if (type === 'spo2') return v < 90 ? 'critical' : v < 95 ? 'warning' : 'normal';
+  if (type === 'temp') return v < 35 || v > 40 ? 'critical' : v < 36.1 || v > 37.2 ? 'warning' : 'normal';
+  if (type === 'bp')   { const s = parseInt(value); if (!s) return 'unknown';
+    return s < 70 || s > 180 ? 'critical' : s < 90 || s > 130 ? 'warning' : 'normal'; }
+  return 'unknown';
+}
+function applyVitalStatus(cardId, status) {
+  const card = document.getElementById(cardId);
+  card.classList.remove('status-normal','status-warning','status-critical');
+  if (status !== 'unknown') card.classList.add(`status-${status}`);
+}
+
+/* ── Toast ──────────────────────────────────── */
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ── Flash ──────────────────────────────────── */
+function flash() {
+  const el = document.getElementById('tx-flash');
+  el.classList.add('active');
+  setTimeout(() => el.classList.remove('active'), 220);
+}
+
+function nowTime() {
+  const n = new Date();
+  return `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
+}
+
+/* ── Submit ─────────────────────────────────── */
+document.getElementById('ambulance-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
+
+  const data = {
+    name:  getVal('p-name'),  phone: getVal('p-phone'),
+    age:   document.getElementById('p-age').value,
+    gender:document.getElementById('p-gender').value || '—',
+    blood: document.getElementById('p-blood').value || '—',
+    desc:  getVal('i-desc'),  loc:   getVal('i-loc') || '—',
+    itime: document.getElementById('i-time').value || '—',
+    bp:    getVal('v-bp') || '—', hr:   getVal('v-hr') || '—',
+    spo2:  getVal('v-spo2') || '—', temp: getVal('v-temp') || '—',
+  };
+
+  flash(); txCount++;
+
+  document.getElementById('h-name').textContent   = data.name;
+  document.getElementById('h-phone').textContent  = data.phone;
+  document.getElementById('h-age').textContent    = data.age + ' yrs';
+  document.getElementById('h-gender').textContent = data.gender;
+  document.getElementById('h-blood').textContent  = data.blood;
+  document.getElementById('h-desc').textContent   = data.desc;
+  document.getElementById('h-loc').textContent    = data.loc;
+  document.getElementById('h-time').textContent   = data.itime;
+  document.getElementById('h-bp').textContent     = data.bp !== '—' ? data.bp + ' mmHg' : '—';
+  document.getElementById('h-hr').textContent     = data.hr !== '—' ? data.hr + ' bpm'  : '—';
+  document.getElementById('h-spo2').textContent   = data.spo2 !== '—' ? data.spo2 + ' %' : '—';
+  document.getElementById('h-temp').textContent   = data.temp !== '—' ? data.temp + ' °C' : '—';
+  document.getElementById('recv-time').textContent  = nowTime();
+  document.getElementById('recv-count').textContent = txCount;
+
+  const statuses = {
+    bp: assessVital('bp', data.bp), hr: assessVital('hr', data.hr),
+    spo2: assessVital('spo2', data.spo2), temp: assessVital('temp', data.temp),
+  };
+  applyVitalStatus('vd-bp', statuses.bp); applyVitalStatus('vd-hr', statuses.hr);
+  applyVitalStatus('vd-spo2', statuses.spo2); applyVitalStatus('vd-temp', statuses.temp);
+
+  const levels = Object.values(statuses).filter(s => s !== 'unknown');
+  let overall = 'normal';
+  if (levels.includes('critical')) overall = 'critical';
+  else if (levels.includes('warning')) overall = 'warning';
+
+  const badge = document.getElementById('emergency-level-badge');
+  badge.className = 'unit-badge level-' + overall;
+  badge.innerHTML = `<span>${overall.toUpperCase()} PRIORITY</span>`;
+
+  const overallLabel = document.getElementById('vitals-overall-label');
+  overallLabel.className = 'vitals-status-label level-' + overall;
+  overallLabel.textContent = overall.toUpperCase();
+
+  document.getElementById('idle-state').style.display    = 'none';
+  document.getElementById('hospital-data').style.display = 'flex';
+  showToast('✅ Data transmitted successfully', 'success');
+});
+
+
+/* ── Chat Widget ─────────────────────────────── */
+(function() {
+  const fab       = document.getElementById('chat-fab');
+  const popup     = document.getElementById('chat-popup');
+  const closeBtn  = document.getElementById('chat-close');
+  const messages  = document.getElementById('chat-messages');
+  const input     = document.getElementById('chat-input');
+  const sendBtn   = document.getElementById('chat-send-btn');
+  const badge     = document.getElementById('chat-badge');
+  const btnParamedic = document.getElementById('btn-paramedic');
+  const btnDoctor    = document.getElementById('btn-doctor');
+
+  let isOpen = false;
+  let unread = 0;
+  let currentRole = 'paramedic'; // 'paramedic' or 'doctor'
+
+  function openChat() {
+    isOpen = true;
+    popup.classList.add('open');
+    unread = 0;
+    badge.style.display = 'none';
+    badge.textContent = '0';
+    scrollToBottom();
+    setTimeout(() => input.focus(), 300);
+  }
+  function closeChat() {
+    isOpen = false;
+    popup.classList.remove('open');
+  }
+
+  fab.addEventListener('click', () => isOpen ? closeChat() : openChat());
+  closeBtn.addEventListener('click', closeChat);
+
+  // Role toggle
+  [btnParamedic, btnDoctor].forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentRole = btn.dataset.role;
+      btnParamedic.classList.toggle('active', currentRole === 'paramedic');
+      btnDoctor.classList.toggle('active', currentRole === 'doctor');
+      input.placeholder = currentRole === 'paramedic'
+        ? 'Paramedic reporting…'
+        : 'Doctor responding…';
+      input.focus();
+    });
+  });
+
+  function scrollToBottom() {
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function addMessage(text, role) {
+    const now = new Date();
+    const t = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    const label = role === 'paramedic' ? '🚑 Paramedic' : '🏥 Dr. Team';
+
+    const wrap = document.createElement('div');
+    wrap.className = `chat-msg ${role}`;
+    wrap.innerHTML = `
+      <div class="msg-bubble">${escapeHtml(text)}</div>
+      <div class="msg-meta">${label} · ${t}</div>
+    `;
+    messages.appendChild(wrap);
+    scrollToBottom();
+
+    // If chat is closed, show badge
+    if (!isOpen) {
+      unread++;
+      badge.style.display = 'flex';
+      badge.textContent = unread > 9 ? '9+' : unread;
+    }
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+    addMessage(text, currentRole);
+    input.value = '';
+    input.focus();
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+})();
+
+</script>
+</body>
+</html>
