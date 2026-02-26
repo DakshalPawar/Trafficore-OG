@@ -1,0 +1,4 @@
+
+C:\Users\kanak>  cd C:\Users\kanak\Desktop\trafficore\frontend
+
+C:\Users\kanak\Desktop\trafficore\frontend>   python -m http.server 3000
