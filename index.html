@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trafficore – Emergency Medical Coordination</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Distinctive font pairing: Rajdhani (display) + IBM Plex Mono (data) + Nunito (body) -->
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="header-brand">
+      <div class="brand-icon">T<span class="cross">+</span></div>
+      <div class="brand-text">
+        <h1>Trafficore</h1>
+        <span>Emergency Medical Coordination System</span>
+      </div>
+    </div>
+
+    <div class="header-status">
+      <!-- Live clock -->
+      <div class="clock-block">
+        <div id="live-clock" class="live-clock">--:--:--</div>
+        <div id="live-date" class="live-date">--- --, ----</div>
+      </div>
+      <!-- System status -->
+      <div class="status-pill" id="system-status">
+        <span class="pulse-dot"></span>
+        <span id="status-text">SYSTEM ONLINE</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════
+       MAIN LAYOUT
+  ═══════════════════════════════════════════════ -->
+  <main class="dashboard">
+
+    <!-- ──────────────────────────────────────────
+         LEFT PANEL – Ambulance Input
+    ────────────────────────────────────────────── -->
+    <section class="panel panel-left" id="ambulance-panel">
+
+      <!-- Panel header -->
+      <div class="panel-header">
+        <div class="panel-icon">🚑</div>
+        <div>
+          <div class="panel-title">Ambulance Unit</div>
+          <div class="panel-subtitle" id="amb-unit-id">Unit ID: AMB-DL-047</div>
+        </div>
+        <div class="unit-badge live-badge">
+          <span class="pulse-dot red"></span> TRANSMITTING
+        </div>
+      </div>
+
+      <!-- FORM -->
+      <form id="ambulance-form" novalidate>
+
+        <!-- ── A) Patient Personal Info ─────────── -->
+        <div class="form-section">
+          <div class="section-label">
+            <span class="section-icon">👤</span>
+            Patient Personal Information
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="p-name">Full Name <span class="req">*</span></label>
+              <input type="text" id="p-name" placeholder="e.g. Rajesh Kumar" autocomplete="off" />
+              <span class="err" id="err-name"></span>
+            </div>
+            <div class="field">
+              <label for="p-phone">Phone Number <span class="req">*</span></label>
+              <input type="tel" id="p-phone" placeholder="+91 98765 43210" />
+              <span class="err" id="err-phone"></span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field field-sm">
+              <label for="p-age">Age <span class="req">*</span></label>
+              <input type="number" id="p-age" placeholder="47" min="0" max="120" />
+              <span class="err" id="err-age"></span>
+            </div>
+            <div class="field field-sm">
+              <label for="p-gender">Gender</label>
+              <select id="p-gender">
+                <option value="">Select</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field field-sm">
+              <label for="p-blood">Blood Group</label>
+              <select id="p-blood">
+                <option value="">Select</option>
+                <option>A+</option><option>A−</option>
+                <option>B+</option><option>B−</option>
+                <option>AB+</option><option>AB−</option>
+                <option>O+</option><option>O−</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── B) Incident Information ────────────── -->
+        <div class="form-section">
+          <div class="section-label">
+            <span class="section-icon">🚨</span>
+            Incident Information
+          </div>
+
+          <div class="field">
+            <label for="i-desc">Incident Description <span class="req">*</span></label>
+            <textarea id="i-desc" rows="3" placeholder="Describe what happened..."></textarea>
+            <span class="err" id="err-desc"></span>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="i-loc">Location</label>
+              <input type="text" id="i-loc" placeholder="e.g. NH-48, Gurugram" />
+            </div>
+            <div class="field field-sm">
+              <label for="i-time">Time of Incident</label>
+              <input type="time" id="i-time" />
+            </div>
+          </div>
+        </div>
+
+        <!-- ── C) Patient Vitals ───────────────────── -->
+        <div class="form-section">
+          <div class="section-label">
+            <span class="section-icon">📊</span>
+            Patient Vitals
+          </div>
+
+          <div class="vitals-grid">
+            <div class="vital-input-card">
+              <label class="vital-label" for="v-bp">🩺 Blood Pressure</label>
+              <input type="text" id="v-bp" placeholder="120/80 mmHg" class="vital-field" />
+              <span class="vital-hint">Normal: 90–120 / 60–80</span>
+            </div>
+            <div class="vital-input-card">
+              <label class="vital-label" for="v-hr">❤️ Heart Rate</label>
+              <input type="number" id="v-hr" placeholder="72 bpm" min="0" max="300" class="vital-field" />
+              <span class="vital-hint">Normal: 60–100 bpm</span>
+            </div>
+            <div class="vital-input-card">
+              <label class="vital-label" for="v-spo2">🫁 Oxygen Level (SpO₂)</label>
+              <input type="number" id="v-spo2" placeholder="98 %" min="0" max="100" class="vital-field" />
+              <span class="vital-hint">Normal: ≥ 95%</span>
+            </div>
+            <div class="vital-input-card">
+              <label class="vital-label" for="v-temp">🌡️ Temperature</label>
+              <input type="number" id="v-temp" placeholder="37.0 °C" step="0.1" min="30" max="45" class="vital-field" />
+              <span class="vital-hint">Normal: 36.1–37.2 °C</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── D) Message to Hospital ─────────────── -->
+        <div class="form-section">
+          <div class="section-label">
+            <span class="section-icon">💬</span>
+            Message to Hospital
+          </div>
+          <div class="field">
+            <textarea id="msg-text" rows="3" placeholder="Any additional notes for the medical team..."></textarea>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="send-btn" id="send-btn">
+          <span class="btn-icon">📡</span>
+          <span class="btn-label">TRANSMIT TO HOSPITAL</span>
+          <span class="btn-flash"></span>
+        </button>
+
+      </form>
+    </section><!-- end panel-left -->
+
+    <!-- ──────────────────────────────────────────
+         RIGHT PANEL – Hospital View
+    ────────────────────────────────────────────── -->
+    <section class="panel panel-right" id="hospital-panel">
+
+      <!-- Panel header -->
+      <div class="panel-header">
+        <div class="panel-icon">🏥</div>
+        <div>
+          <div class="panel-title">Hospital Control Room</div>
+          <div class="panel-subtitle">AIIMS Emergency Reception</div>
+        </div>
+        <div class="unit-badge" id="emergency-level-badge">
+          <span>AWAITING DATA</span>
+        </div>
+      </div>
+
+      <!-- Idle state (shown before first submission) -->
+      <div class="idle-state" id="idle-state">
+        <div class="idle-icon">📡</div>
+        <p class="idle-title">Awaiting Transmission</p>
+        <p class="idle-sub">Fill the ambulance form and click<br /><strong>TRANSMIT TO HOSPITAL</strong></p>
+      </div>
+
+      <!-- Hospital data cards (hidden until data arrives) -->
+      <div class="hospital-data" id="hospital-data" style="display:none;">
+
+        <!-- Received timestamp -->
+        <div class="received-banner">
+          <span class="pulse-dot green"></span>
+          Data received at <strong id="recv-time">--:--:--</strong>
+          &nbsp;·&nbsp; Transmission #<strong id="recv-count">1</strong>
+        </div>
+
+        <!-- Patient Details Card -->
+        <div class="data-card" id="hc-patient">
+          <div class="data-card-header">
+            <span>👤</span> Patient Details
+          </div>
+          <div class="data-card-body">
+            <div class="data-grid">
+              <div class="data-item">
+                <span class="d-label">Full Name</span>
+                <span class="d-value" id="h-name">—</span>
+              </div>
+              <div class="data-item">
+                <span class="d-label">Phone</span>
+                <span class="d-value" id="h-phone">—</span>
+              </div>
+              <div class="data-item">
+                <span class="d-label">Age</span>
+                <span class="d-value" id="h-age">—</span>
+              </div>
+              <div class="data-item">
+                <span class="d-label">Gender</span>
+                <span class="d-value" id="h-gender">—</span>
+              </div>
+              <div class="data-item">
+                <span class="d-label">Blood Group</span>
+                <span class="d-value blood" id="h-blood">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Incident Details Card -->
+        <div class="data-card" id="hc-incident">
+          <div class="data-card-header">
+            <span>🚨</span> Incident Details
+          </div>
+          <div class="data-card-body">
+            <div class="incident-desc" id="h-desc">—</div>
+            <div class="data-grid mt-8">
+              <div class="data-item">
+                <span class="d-label">Location</span>
+                <span class="d-value" id="h-loc">—</span>
+              </div>
+              <div class="data-item">
+                <span class="d-label">Time of Incident</span>
+                <span class="d-value mono" id="h-time">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vitals Card -->
+        <div class="data-card" id="hc-vitals">
+          <div class="data-card-header">
+            <span>📊</span> Patient Vitals
+            <span class="vitals-status-label" id="vitals-overall-label">—</span>
+          </div>
+          <div class="data-card-body">
+            <div class="vitals-display-grid">
+              <div class="vital-display-card" id="vd-bp">
+                <div class="vd-icon">🩺</div>
+                <div class="vd-value" id="h-bp">—</div>
+                <div class="vd-label">Blood Pressure</div>
+                <div class="vd-status-bar"></div>
+              </div>
+              <div class="vital-display-card" id="vd-hr">
+                <div class="vd-icon">❤️</div>
+                <div class="vd-value" id="h-hr">—</div>
+                <div class="vd-label">Heart Rate</div>
+                <div class="vd-status-bar"></div>
+              </div>
+              <div class="vital-display-card" id="vd-spo2">
+                <div class="vd-icon">🫁</div>
+                <div class="vd-value" id="h-spo2">—</div>
+                <div class="vd-label">SpO₂</div>
+                <div class="vd-status-bar"></div>
+              </div>
+              <div class="vital-display-card" id="vd-temp">
+                <div class="vd-icon">🌡️</div>
+                <div class="vd-value" id="h-temp">—</div>
+                <div class="vd-label">Temperature</div>
+                <div class="vd-status-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Message Card -->
+        <div class="data-card" id="hc-msg">
+          <div class="data-card-header">
+            <span>💬</span> Paramedic Note
+          </div>
+          <div class="data-card-body">
+            <div class="message-bubble" id="h-msg">—</div>
+          </div>
+        </div>
+
+      </div><!-- end hospital-data -->
+    </section><!-- end panel-right -->
+
+  </main><!-- end dashboard -->
+
+  <!-- ── Toast notification ────────────────────── -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ── Transmission flash overlay ──────────────── -->
+  <div class="tx-flash" id="tx-flash"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
