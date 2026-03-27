@@ -2,3 +2,7 @@
 C:\Users\kanak>  cd C:\Users\kanak\Desktop\trafficore\frontend
 
 C:\Users\kanak\Desktop\trafficore\frontend>   python -m http.server 3000
+
+
+# View database
+# Open: http://localhost:8080/h2-console
