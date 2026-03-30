@@ -1,3 +1,12 @@
+//This code is simulating a 4-way traffic signal controller using an ESP32/Arduino.
+// This program:
+// Controls a 4-sided traffic junction
+//  Cycles signals one side at a time
+// Uses:
+//  Red
+//  Green
+//  Yellow (shared)
+
 // -------------------- Pin Setup --------------------
 #define YELLOW_PIN 2  // Common Yellow for all 4 sides
 
