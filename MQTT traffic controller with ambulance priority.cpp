@@ -1,3 +1,17 @@
+//This is an ESP32-based smart traffic light system. THe following things this code do:-
+// Runs normal traffic signals 
+// Listens to MQTT messages 
+// Overrides signals when ambulance is detected
+//======================================================================
+
+// =======LOGIC=========
+// What it does:
+// Connects ESP32 to WiFi
+// Connects to MQTT broker (your Raspberry Pi)
+// When an ambulance request is received, the system dynamically overrides the normal traffic cycle and prioritizes the required route using real-time communication
+
+
+
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
