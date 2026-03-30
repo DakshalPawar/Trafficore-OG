@@ -1,3 +1,5 @@
+// Basic MQTT client implementation on ESP32 that subscribes to a topic and triggers traffic signal actions based on received messages.
+
 #include <WiFi.h>
 #include <PubSubClient.h>
 
