@@ -1,3 +1,6 @@
+//It turns your ESP32 into a mini web server that can receive messages over WiFi.
+//ESP32 can receive commands/messages from your system over WiFi
+
 #include <WiFi.h>
 #include <WebServer.h>
 
