@@ -1,3 +1,6 @@
+# This code was for live data transmissions through websocts but due to crtain reson the the code wasnt working but we have to find its alteernative 
+# Basic work flow -- User Input → Raspberry Pi → MQTT → Backend / Dashboard
+
 import paho.mqtt.client as mqtt
 import json
 
