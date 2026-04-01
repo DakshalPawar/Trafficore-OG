@@ -1,3 +1,7 @@
+This code will run on raspberrypi in the background.
+this code is for turning on the rpi camera n then the live camera will be serverd on the web page through python streaming 
+
+
 rpicam-vid -t 0 --inline --width 1280 --height 720 --framerate 25 -o - \
   | ffmpeg -hide_banner -loglevel info -i - -c:v copy \
     -f hls -hls_time 2 -hls_list_size 5 -hls_flags delete_segments ~/hls_stream/stream.m3u8
