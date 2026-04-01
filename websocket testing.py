@@ -1,3 +1,5 @@
+# Simple websockets testing
+
 import asyncio
 import websockets
 import json
