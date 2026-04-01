@@ -1,3 +1,8 @@
+# A Raspberry Pi-based MQTT control system that sends structured ambulance priority commands (path + direction + reset) using physical buttons.
+# Select which road (A/B/C/D)
+# Select which direction (LEFT/RIGHT/STRAIGHT)
+# Send it to ESP32 via MQTT
+
 import RPi.GPIO as GPIO
 import time
 import json
