@@ -1,3 +1,6 @@
+# A Raspberry Pi script that uses physical buttons to send MQTT messages for ambulance signal priority.
+# Button Press → Raspberry Pi → MQTT → ESP32 → Traffic Signal
+
 import RPi.GPIO as GPIO
 import time
 import json
