@@ -1,0 +1,13 @@
+Froentend serever connection 
+C:\Users\kanak>  cd C:\Users\kanak\Desktop\trafficore\frontend
+C:\Users\kanak\Desktop\trafficore\frontend>   python -m http.server 3000
+
+database connection to backend server
+# View database
+# Open: http://localhost:8080/h2-console
+
+backened server
+too keep backend running 
+go to terminal and paste 
+S C:\Users\kanak\Desktop\trafficore-backend test\hospital-dashboard-backend>  .\mvnw.cmd spring-boot:run
+

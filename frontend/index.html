@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRAFFICORE - Hospital Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+</head>
+<body>
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <h2>🚦 TRAFFICORE</h2>
+  <ul>
+    <li><a href="index.html">🏠 Dashboard</a></li>
+    <li><a href="camera.html">📹 Live Camera</a></li>
+    <li><a href="stats.html">📊 Patient Stats</a></li>
+    <li><a href="gps.html">📍 GPS Tracking</a></li>
+    <li><a href="alerts.html">⚠️ Alerts <span id="alert-badge" class="badge">2</span></a></li>
+    <li><a href="chat.html">💬 Doctor Chat</a></li>
+    <li><a href="reports.html">📑 Reports</a></li>
+  </ul>
+</div>
+
+<!-- Main -->
+<div class="main-content">
+  <header>
+    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+    Hospital Dashboard
+  </header>
+
+  <div class="dashboard">
+
+    <!-- Live Camera -->
+    <section id="camera-feed">
+          <h2>📹 Live Camera Feed</h2>
+          <iframe
+              src="http://192.168.0.175:8000/hls_stream/stream.m3u8"
+              width="640"
+              height="340"
+              frameborder="0"
+              allowfullscreen
+              style="border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+          </iframe>
+        </section>
+
+
+
+    <!-- Patient Statistics -->
+    <div class="card stats" id="stats">
+      <h3>Patient Statistics</h3>
+      <table>
+        <thead>
+        <tr><th>Parameter</th><th>Value</th></tr>
+        </thead>
+        <tbody>
+        <tr><td>Heart Rate</td><td>--</td></tr>
+        <tr><td>Blood Pressure</td><td>--</td></tr>
+        <tr><td>Oxygen Level</td><td>--</td></tr>
+        <tr><td>Temperature</td><td>--</td></tr>
+        </tbody>
+      </table>
+    </div>
+      <!-- Patient information -->
+    <div class="card">
+      <h2>Patient Information</h2>
+      <p>Name: <span id="name">--</span></p>
+      <p>Age: <span id="age">--</span></p>
+      <p>Blood Type: <span id="blood_type">--</span></p>
+      <p>Condition: <span id="condition">--</span></p>
+      <p>Accident Details: <span id="accident">--</span></p>
+    </div>
+
+
+    <!-- GPS -->
+    <div class="card gps" id="gps">
+      <h3>Ambulance GPS Tracking</h3>
+      <div class="spinner" id="gps-spinner"></div>
+      <div id="map" class="hidden"></div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="card alerts" id="alerts">
+      <h3>⚠️ Emergency Alerts</h3>
+      <ul id="alert-list">
+        <li>Oxygen level dropped below 90%!</li>
+        <li>Ambulance ETA: 12 minutes</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- JS -->
+<script src="script.js"></script>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,247 @@
+/* ===== Modern Trafficore Dashboard CSS (UI Revamp) ===== */
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  font-family: "Poppins", Arial, sans-serif;
+  background: linear-gradient(135deg,#0f172a,#111827);
+  margin:0;
+  padding:0;
+  display:flex;
+  color:#e5e7eb;
+}
+
+/* ===== Sidebar ===== */
+.sidebar{
+  width: 220px;
+  background: linear-gradient(180deg,#020617,#020617);
+  border-right:1px solid rgba(255,255,255,0.08);
+  color:#fff;
+  height:100vh;
+  padding:25px 12px;
+  position:fixed;
+  top:0;
+  left:0;
+  overflow-y:auto;
+  transition:0.35s ease;
+}
+
+.sidebar h2{
+  margin:0 0 25px;
+  text-align:center;
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:.5px;
+  color:#38bdf8;
+}
+
+.sidebar ul{
+  list-style:none;
+  padding:0;
+}
+
+.sidebar ul li{
+  margin:12px 0;
+}
+
+.sidebar ul li a{
+  text-decoration:none;
+  color:#cbd5f5;
+  font-size:14px;
+  padding:10px 12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border-radius:10px;
+  background:transparent;
+  transition:0.25s;
+}
+
+.sidebar ul li a:hover{
+  background:rgba(56,189,248,0.12);
+  color:#38bdf8;
+  box-shadow: inset 0 0 0 1px rgba(56,189,248,.25);
+  transform:translateX(3px);
+}
+
+.badge{
+  background:#ef4444;
+  padding:2px 7px;
+  font-size:11px;
+  border-radius:12px;
+  margin-left:auto;
+}
+
+/* Collapsed Sidebar */
+.sidebar.closed{ transform:translateX(-220px); }
+
+/* ===== Main Layout ===== */
+.main-content{
+  margin-left:220px;
+  flex:1;
+  transition:0.35s;
+}
+
+.sidebar.closed + .main-content{
+  margin-left:0;
+}
+
+/* ===== Header ===== */
+header{
+  background:rgba(2,6,23,.6);
+  backdrop-filter: blur(12px);
+  color:#f9fafb;
+  padding:14px;
+  text-align:center;
+  font-size:18px;
+  font-weight:600;
+  position:sticky;
+  top:0;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+.toggle-btn{
+  float:left;
+  background:rgba(56,189,248,.12);
+  border:1px solid rgba(56,189,248,.3);
+  font-size:18px;
+  color:#38bdf8;
+  border-radius:10px;
+  padding:4px 8px;
+  cursor:pointer;
+  margin-right:10px;
+  transition:.25s;
+}
+.toggle-btn:hover{
+  background:#38bdf8;
+  color:#020617;
+}
+
+/* ===== Dashboard Grid ===== */
+.dashboard{
+  display:grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap:18px;
+  padding:18px;
+  min-height:calc(100vh - 60px);
+}
+
+/* ===== Card Design ===== */
+.card{
+  background:linear-gradient(180deg,#020617,#020617);
+  border:1px solid rgba(56,189,248,0.18);
+  border-radius:18px;
+  padding:14px 14px 10px;
+  box-shadow:0 20px 40px rgba(0,0,0,.35);
+  display:flex;
+  flex-direction:column;
+  transition:.3s;
+}
+
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 25px 50px rgba(0,0,0,.45);
+}
+
+.card h3, .card h2{
+  margin:0 0 12px;
+  color:#f9fafb;
+  font-weight:600;
+  letter-spacing:.3px;
+}
+
+/* ===== Video Panel ===== */
+.camera-stream video{
+  border-radius:16px;
+  border:1px solid rgba(56,189,248,.25);
+  background:#000;
+}
+
+/* ===== Tables ===== */
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+
+table th, table td{
+  padding:10px;
+  text-align:center;
+}
+
+table th{
+  background:rgba(56,189,248,.15);
+  color:#e0f2fe;
+  border-bottom:1px solid rgba(56,189,248,.35);
+}
+
+table td{
+  background:rgba(255,255,255,.03);
+  border-bottom:1px dashed rgba(56,189,248,.15);
+}
+
+/* ===== GPS Map ===== */
+#map{
+  height:260px;
+  width:100%;
+  border-radius:14px;
+  border:1px solid rgba(56,189,248,.25);
+}
+
+/* Spinner */
+.spinner{
+  border:4px solid rgba(255,255,255,.15);
+  border-top:4px solid #38bdf8;
+  border-radius:50%;
+  width:42px;
+  height:42px;
+  animation:spin 1s linear infinite;
+  margin:20px auto;
+}
+@keyframes spin{100%{transform:rotate(360deg)}}
+
+.hidden{display:none}
+
+/* ===== Alerts ===== */
+.alerts ul{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+.alerts li{
+  padding:10px 12px;
+  margin:6px 0;
+  background:rgba(239,68,68,.12);
+  border-left:6px solid #ef4444;
+  border-radius:10px;
+  font-size:14px;
+  color:#fecaca;
+}
+
+/* ===== Patient Info ===== */
+.card p{
+  margin:6px 0;
+  color:#e5e7eb;
+}
+
+/* ===== Chat Bubble Style ===== */
+#chat-box p{
+  margin:6px 0;
+  padding:8px 12px;
+  border-radius:12px;
+  background:rgba(255,255,255,.08);
+}
+
+/* ===== Responsive ===== */
+@media(max-width:1366px){
+  .dashboard{ grid-template-columns:1.5fr 1fr 1fr; }
+  #map{ height:220px; }
+}
+
+@media(max-width:900px){
+  .dashboard{ grid-template-columns:1fr; }
+  .main-content{ margin-left:0; }
+}

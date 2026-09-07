@@ -1,0 +1,320 @@
+# 🚑 TRAFFICORE Setup Guide
+
+## Overview
+This guide will help you set up the complete TRAFFICORE system with:
+- ✅ Real-time patient data via MQTT
+- ✅ GPS tracking of ambulance
+- ✅ Doctor-Ambulance chat system
+- ✅ Live camera stream
+
+---
+
+## 📋 Prerequisites
+
+### Raspberry Pi (Ambulance Side)
+- Raspberry Pi 4 or 3B+
+- Raspbian OS installed
+- Python 3.7+
+- Camera module (optional)
+- GPS module (optional, can simulate)
+
+### Hospital Dashboard (Computer/Server)
+- Modern web browser (Chrome, Firefox, Edge)
+- Web server (Apache, Nginx, or Python's HTTP server)
+
+---
+
+## 🔧 Part 1: Raspberry Pi Setup
+
+### 1. Install Mosquitto MQTT Broker
+
+```bash
+# Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install Mosquitto broker and clients
+sudo apt install mosquitto mosquitto-clients -y
+
+# Enable Mosquitto to start on boot
+sudo systemctl enable mosquitto
+```
+
+### 2. Configure Mosquitto
+
+```bash
+# Create configuration file
+sudo nano /etc/mosquitto/conf.d/mosquitto.conf
+```
+
+Copy the content from the **Mosquitto Configuration** artifact, then:
+
+```bash
+# Restart Mosquitto
+sudo systemctl restart mosquitto
+
+# Check status
+sudo systemctl status mosquitto
+```
+
+### 3. Install Python MQTT Library
+
+```bash
+# Install paho-mqtt
+pip3 install paho-mqtt
+
+# Or if you get permission errors
+pip3 install --user paho-mqtt
+```
+
+### 4. Set Up the Ambulance Script
+
+```bash
+# Create a directory for the project
+mkdir ~/trafficore
+cd ~/trafficore
+
+# Create the Python script
+nano ambulance_sender.py
+```
+
+Copy the content from the **Raspberry Pi MQTT Sender** artifact, then:
+
+```bash
+# Make it executable
+chmod +x ambulance_sender.py
+
+# Run it
+python3 ambulance_sender.py
+```
+
+### 5. Find Your Pi's IP Address
+
+```bash
+hostname -I
+```
+
+Note this IP address - you'll need it for the dashboard!
+
+---
+
+## 🏥 Part 2: Hospital Dashboard Setup
+
+### 1. Prepare Your Files
+
+Create a project folder with this structure:
+```
+trafficore/
+├── index.html      (your main HTML)
+├── chat.html       (chat page artifact)
+├── script.js       (enhanced script artifact)
+├── style.css       (your existing styles)
+└── assets/
+    └── ambulance.png
+```
+
+### 2. Update IP Addresses
+
+In `script.js`, update this line with your Raspberry Pi's IP:
+```javascript
+const PI_IP = "192.168.26.193"; // Replace with your Pi IP from Part 1, Step 5
+```
+
+### 3. Start a Local Web Server
+
+**Option A: Python HTTP Server**
+```bash
+cd trafficore
+python3 -m http.server 8080
+```
+
+**Option B: VS Code Live Server**
+- Install "Live Server" extension
+- Right-click `index.html` → "Open with Live Server"
+
+### 4. Access the Dashboard
+
+Open your browser and go to:
+```
+http://localhost:8080
+```
+
+---
+
+## 🧪 Part 3: Testing
+
+### Test MQTT Connection
+
+On your Raspberry Pi:
+```bash
+# Subscribe to all topics
+mosquitto_sub -h localhost -t "hospital/#" -v
+
+# In another terminal, publish a test message
+mosquitto_pub -h localhost -t "hospital/test" -m "Hello from Pi"
+```
+
+### Test from Dashboard
+
+1. Open browser console (F12)
+2. Look for: `✅ Connected to MQTT broker over WebSocket`
+3. Check for: `📋 Subscribed to patient data`
+
+---
+
+## 🚀 Part 4: Making It Work Together
+
+### Start the System
+
+**On Raspberry Pi:**
+```bash
+cd ~/trafficore
+python3 ambulance_sender.py
+```
+
+You should see:
+```
+🚑 TRAFFICORE Ambulance System Started
+==================================================
+Sending patient data and GPS updates...
+📊 Patient data sent - HR: 85 bpm, O2: 95.3%
+📍 GPS updated - ETA: 12 min
+```
+
+**On Hospital Dashboard:**
+- Open `http://localhost:8080`
+- Watch the dashboard update in real-time!
+- Go to chat page to communicate with ambulance
+
+---
+
+## 💬 Using the Chat System
+
+### From Dashboard (Doctor):
+1. Go to Chat page
+2. Type message in input box
+3. Press Enter or click Send
+4. Message appears on both sides
+
+### From Raspberry Pi (Ambulance):
+In the terminal running the Python script, you can add this feature by modifying the script to accept input (or use a separate chat script).
+
+---
+
+## 🐛 Troubleshooting
+
+### Dashboard Not Connecting?
+
+1. **Check Pi IP address:**
+   ```bash
+   hostname -I
+   ```
+
+2. **Test MQTT from browser console:**
+   ```javascript
+   mqtt.connect("ws://YOUR_PI_IP:9001")
+   ```
+
+3. **Check firewall:**
+   ```bash
+   sudo ufw allow 9001
+   sudo ufw allow 1883
+   ```
+
+### No Data Showing?
+
+1. **Verify Python script is running:**
+   ```bash
+   ps aux | grep ambulance_sender.py
+   ```
+
+2. **Check Mosquitto logs:**
+   ```bash
+   sudo tail -f /var/log/mosquitto/mosquitto.log
+   ```
+
+3. **Test with mosquitto_sub:**
+   ```bash
+   mosquitto_sub -h localhost -t "hospital/#" -v
+   ```
+
+### GPS Not Moving on Map?
+
+1. Ensure the map initialization completes
+2. Check browser console for errors
+3. Verify GPS data is being published:
+   ```bash
+   mosquitto_sub -h YOUR_PI_IP -t "hospital/gps"
+   ```
+
+---
+
+## 🎯 Adding Real Sensors
+
+### For Real Patient Data:
+Replace the `get_patient_data()` function with actual sensor readings:
+- Heart rate: Use pulse sensor with ADC
+- Blood pressure: Use digital BP monitor via serial
+- Oxygen: Use MAX30100/MAX30102 sensor
+- Temperature: Use DS18B20 or MLX90614
+
+### For Real GPS:
+Replace `get_gps_data()` with actual GPS module (NEO-6M, NEO-7M):
+```python
+import serial
+import pynmea2
+
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+# Parse NMEA sentences from GPS module
+```
+
+---
+
+## 📊 MQTT Topic Structure
+
+| Topic | Purpose | Data Format |
+|-------|---------|-------------|
+| `hospital/patient` | Patient vitals & info | JSON with health data |
+| `hospital/gps` | Ambulance location | JSON with lat, lng, ETA |
+| `hospital/chat/doctor` | Doctor → Ambulance | JSON with message, timestamp |
+| `hospital/chat/ambulance` | Ambulance → Doctor | JSON with message, timestamp |
+
+---
+
+## 🔒 Security Notes (For Production)
+
+1. **Enable MQTT authentication:**
+   ```bash
+   sudo mosquitto_passwd -c /etc/mosquitto/passwd hospital_user
+   ```
+
+2. **Use SSL/TLS:**
+   - Generate certificates
+   - Configure mosquitto for secure connections
+
+3. **Restrict access:**
+   - Set `allow_anonymous false`
+   - Configure ACL (Access Control List)
+
+4. **Use HTTPS** for the dashboard in production
+
+---
+
+## 📱 Next Steps
+
+- Add more vitals sensors
+- Implement real GPS tracking
+- Add camera streaming with RTSP/HLS
+- Create mobile app version
+- Add database for storing patient records
+- Implement user authentication
+
+---
+
+## 🆘 Need Help?
+
+Common issues:
+- **WebSocket connection failed**: Check firewall and Mosquitto config
+- **CORS errors**: Serve dashboard from proper web server, not file://
+- **Data not updating**: Verify MQTT topics match on both ends
+
+Good luck with your TRAFFICORE project! 🚑💙
