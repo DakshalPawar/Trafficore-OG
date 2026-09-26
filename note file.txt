@@ -1,0 +1,1 @@
+basically hospital and ambulance backend is kept common so it would be easy to execute and less memory will be used also the new backend will be uploaded in cmg week
